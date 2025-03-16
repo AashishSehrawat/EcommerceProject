@@ -1,10 +1,12 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Loader from "./components/Loader";
+import Header from "./components/Header";
 
 const Home = lazy(() => import("./pages/Home"));
 const Search = lazy(() => import("./pages/Search"));
 const Cart = lazy(() => import("./pages/Cart"));
+const Shipping = lazy(() => import("./pages/Shipping"));
 
 // Admin Import
 const Dashboard = lazy(() => import("./pages/admin/dashboard"));
@@ -29,6 +31,8 @@ function App() {
   return (
     <Router>
       {/* header */}
+      <Header />
+
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -36,17 +40,24 @@ function App() {
           <Route path="/cart" element={<Cart />} />
 
 
-          
+          {/* Logged in user routes */}
+          <Route>
+            <Route path="/shipping" element={<Shipping />} />
+          </Route>
+
+
           {/* Admin routes */}
           <Route>
             <Route path="/admin/dashboard" element={<Dashboard />} />
             <Route path="/admin/product" element={<Products />} />
             <Route path="/admin/customer" element={<Customers />} />
             <Route path="/admin/transaction" element={<Transaction />} />
+
             {/* Charts */}
             <Route path="/admin/chart/bar" element={<Barcharts />} />
             <Route path="/admin/chart/pie" element={<Piecharts />} />
             <Route path="/admin/chart/line" element={<Linecharts />} />
+            
             {/* Apps */}
             <Route path="/admin/app/coupon" element={<Coupon />} />
             <Route path="/admin/app/stopwatch" element={<Stopwatch />} />

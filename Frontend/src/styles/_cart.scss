@@ -1,0 +1,90 @@
+.cart {
+    @include flex(row, unset, unset, 1rem);
+    width: 100%;
+
+    > main {
+        width: 70%;
+        height: 82vh;
+        overflow-y: auto;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    > aside{
+        width: 30%;
+        height: 70vh;
+        @include flex();
+        > .asideContentCart{
+            width: 70%;
+            @include flex(column, unset, unset, 1rem);
+            > .totalPriceCart{
+                @include flex(column, unset, unset, .5rem);
+                p:last-of-type {
+                    font-weight: 700;
+                }
+            }
+            > .couponCart{
+                @include flex(column, unset, unset, 1rem);
+                > input {
+                    padding: 8px 16px;
+                    font-size: 1rem;
+                    outline: none;
+                    border: 1px solid rgb(193, 193, 193);
+                    border-radius: 4px;
+                }
+                a {
+                    @include mainButton();
+                }
+            }
+        }
+    }
+}
+
+// CartItem Component
+.cartItem {
+    width: 100%;
+    border-bottom: 1px solid rgb(196, 196, 196);
+    padding: 12px 24px;
+
+    @include flex(row, unset, center, 2rem);
+    > .imageOfCartItem {
+        width: 200px;
+        > img {
+            width: 100%;
+            @include flex();
+            object-fit: cover;
+        }
+    }
+    > article {
+        width: 60%;
+        font-size: 1.1rem;
+        @include flex(column, center, flex-start, .5rem);
+        > span {
+            font-weight: 700;
+        }
+    }
+
+    > .qunatityofCartItem {
+        @include flex(row, center, center, .5rem);
+        > button {
+            background-color: black;
+            color: white;
+            padding: 4px 2px;
+            border-radius: 2px;
+            cursor: pointer;
+            > svg{
+                @include flex();
+            }
+        }
+    }
+
+    > button {
+        color: red;
+        background-color: white;
+        border: none;
+        font-size: 1.5rem;
+        @include flex();
+        cursor: pointer;
+    }
+}

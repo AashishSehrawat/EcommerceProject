@@ -4,6 +4,21 @@
   text-transform: $case;
 }
 
+@mixin mainButton() {
+  background-color: #0085FB;
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .3s;
+  text-align: center;
+  &:hover {
+    background-color: black;
+  }
+}
+
 @mixin flex(
   $dir: row,
   $justifyContent: center,

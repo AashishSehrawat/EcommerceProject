@@ -1,3 +1,14 @@
+@import "admin/mixin";
+
+@import "home";
+@import "cart";
+@import "shipping";
+@import "admin/dashboard";
+@import "admin/products";
+@import "admin/chart";
+@import "admin/dashboardapp";
+@import "admin/mediaquery";
+
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap");
 
 :root {
@@ -6,15 +17,25 @@
   font-weight: 400;
 }
 
+$colorBlue: #0085FB;
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body{
+  user-select: none;
+}
+
 a {
   text-decoration: none;
   color: black;
+}
+
+.container {
+  padding: 2rem 4rem;
 }
 
 .red {
@@ -27,18 +48,113 @@ a {
   color: rgb(0, 195, 0);
 }
 
+// Header Section
+.header {
+  width: 100%;
+  background-color: #f3f3f356;
+  box-shadow: 0px 2px 5px rgba(139, 139, 139, 0.137);
+  padding: .5rem 2rem;
+  @include flex(row, space-between, center, 1rem);
 
-@import "admin/mixin";
-@import "admin/dashboard";
-@import "admin/products";
-@import "admin/chart";
-@import "admin/dashboardapp";
-@import "admin/mediaquery";
+  .itemsHeader {
+    font-size: 1.2rem;
+    @include flex(row, unset, center, 1.4rem);
 
+    > a {
+      @include flex();
+      transition: all .3s;
+      font-weight: 500;
+      &:hover {
+        color: $colorBlue;
+      }
+    }
+
+    button {
+      border: none;
+      outline: none;
+      font-size: 1.2rem;
+      padding-top: 5px;
+      transition: all .3s;
+      cursor: pointer;
+      &:hover{
+        color: $colorBlue;
+      }
+    }
+
+    dialog {
+      border: 1px solid rgb(209, 209, 209);
+      border-radius: 8px;
+      padding: 10px;
+      background-color: white;
+      width: 100px;
+      font-size: 1rem;
+      position: absolute;
+      left: calc(100% - 130px);
+      top: 10%;
+      div {
+        @include flex(column, center, unset, .2rem);
+        > a {
+          transition: all .3s;
+          &:hover {
+            color: $colorBlue;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Admin dashboard SCSS
 
 .logoDesign {
     width: 100%;    
-    color: #0095ff;
+    color: $colorBlue;
     @include flex(row, none, center, 0rem);
     font-size: 1.7rem;
     font-weight: 700;
