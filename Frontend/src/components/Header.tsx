@@ -9,7 +9,7 @@ import {
 import { useState } from "react";
 import logo from "../assets/logo.png";
 
-const user = { _id: "1", role: "admin" };
+const user = { _id: "1", role: "" };
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

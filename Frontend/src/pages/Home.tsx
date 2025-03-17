@@ -13,7 +13,7 @@ const Home = () => {
       <section className="latestProductHome">
         <div>
           <h1>Latest Products</h1>
-          <Link to={""}>
+          <Link to={"/search"}>
             More
             <FaLongArrowAltRight />
           </Link>
@@ -28,6 +28,46 @@ const Home = () => {
             handler={addToCartHandler}
           />
           <ProductCard
+            productId="jfbvad"
+            name="Macbook"
+            price={80000}
+            stock={20}
+            photo={macbook}
+            handler={addToCartHandler}
+          />
+          <ProductCard
+            productId="jfbvad"
+            name="Macbook"
+            price={80000}
+            stock={20}
+            photo={macbook}
+            handler={addToCartHandler}
+          />
+          <ProductCard
+            productId="jfbvad"
+            name="Macbook"
+            price={80000}
+            stock={20}
+            photo={macbook}
+            handler={addToCartHandler}
+          />
+                   <ProductCard
+            productId="jfbvad"
+            name="Macbook"
+            price={80000}
+            stock={20}
+            photo={macbook}
+            handler={addToCartHandler}
+          />
+                   <ProductCard
+            productId="jfbvad"
+            name="Macbook"
+            price={80000}
+            stock={20}
+            photo={macbook}
+            handler={addToCartHandler}
+          />
+                   <ProductCard
             productId="jfbvad"
             name="Macbook"
             price={80000}
