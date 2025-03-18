@@ -49,7 +49,7 @@ const Header = () => {
                   <Link to={"/admin/dashboard"}>Admin</Link>
                 )}
 
-                <Link to={"/orders"}>Orders</Link>
+                <Link to={"/orders"} onClick={() => setIsOpen(false)}>Orders</Link>
                 <button>
                   <FaSignOutAlt />
                 </button>
