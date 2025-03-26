@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
 
 interface IUser extends Document {
     _id: string,
@@ -14,14 +15,13 @@ interface IUser extends Document {
 
     // virtual attribute
     age: number,
+
+    // method to check passowrd
+    isPasswordCorrect(candidatePassword: string): Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema(
   {
-    _id: {
-      type: String,
-      required: [true, "Please enter ID"],
-    },
     name: {
       type: String,
       trim: true,
@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       unique: [true, "Email already registered"],
       lowercase: true,
       validate: validator.default.isEmail,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     photo: {
       type: String,
@@ -70,5 +74,20 @@ userSchema.virtual("age").get(function () {
 
   return age;
 });
+
+// encrypt the password
+userSchema.pre("save", async function(next) {
+  if(!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+})
+
+// check the passowrd is correct or not
+userSchema.methods.isPasswordCorrect = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+}
+
+
 
 export const User = mongoose.model<IUser>("User", userSchema);
