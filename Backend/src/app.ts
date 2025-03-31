@@ -5,6 +5,8 @@ dotenv.config();
 
 // import user routes
 import userRoute from './routes/userRoute.js';
+import productRoute from "./routes/productRoutes.js";
+import cookieParser from "cookie-parser";
 
 
 
@@ -12,12 +14,15 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json()); 
+app.use(express.static("public"));
+app.use(cookieParser());
 
 // connect the database
 connectDB();
 
 // Using routes
 app.use("/api/v1/user", userRoute)
+app.use("/api/v1/product", productRoute)
 
 
 app.get("/", (req, res) => {
