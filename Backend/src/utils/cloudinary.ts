@@ -1,11 +1,7 @@
 import {v2 as cloudinary} from "cloudinary";
 import fs from "fs";
-
-console.log("Verifying Cloudinary config...", {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    has_secret: !!process.env.CLOUDINARY_API_SECRET
-});
+import dotenv from "dotenv";
+dotenv.config();
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,29 +18,18 @@ const uploadOnCloudinary = async (localFilePath: string) => {
             return null;
         }
 
-        // Verify file exists
-        if (!fs.existsSync(localFilePath)) {
-            console.log('File does not exist at path:', localFilePath);
-            return null;
-        }
-
         console.log('About to upload to Cloudinary...');
         const uploadResult = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto",
         });
-        
-        console.log('Upload successful:', {
-            url: uploadResult.url,
-            public_id: uploadResult.public_id
-        });
+        console.log("File uplload successfully: ", uploadResult);
         
         fs.unlinkSync(localFilePath);
         return uploadResult;
     } catch (error) {
         console.error('Full upload error:', error);
-        if (fs.existsSync(localFilePath)) {
-            fs.unlinkSync(localFilePath);
-        }
+        fs.unlinkSync(localFilePath);
+        
         return null;
     }  
 }

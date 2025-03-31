@@ -12,8 +12,8 @@ interface AuthRequest extends Request {
 const verifyJWT = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     const token =
-      req.header("Authorization")?.replace("Bearer ", "") ||
-      req.cookies?.accessToken;
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
       throw new ApiError(
@@ -32,7 +32,7 @@ const verifyJWT = asyncHandler(
     ) as jwt.JwtPayload;
 
     const userId: string = decodedToken._id.toString();
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password");
 
     if (!user) {
       throw new ApiError(401, "Invalid token: User not found");

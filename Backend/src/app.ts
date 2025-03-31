@@ -1,12 +1,13 @@
-import express from "express";
-import connectDB from "./db/index.js";
 import dotenv from "dotenv";
 dotenv.config();
+import express from "express";
+import connectDB from "./db/index.js";
+import cookieParser from "cookie-parser";
 
 // import user routes
 import userRoute from './routes/userRoute.js';
 import productRoute from "./routes/productRoutes.js";
-import cookieParser from "cookie-parser";
+
 
 
 

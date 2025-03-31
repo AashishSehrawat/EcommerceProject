@@ -15,10 +15,9 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-    photo: {
+    productPhoto: {
         type: String,
         required: true,
-        trim: true,
     },
     price: {
         type: Number,
@@ -35,12 +34,6 @@ const productSchema = new mongoose.Schema({
         type: String,
         enum: ["Shoes", "Laptop", "Mobile", "Clothes", "Accessories", "Tablets"],
         default: "None",
-    },
-    description: {
-        type: String,
-        required: true,
-        trim: true,
-        max: 200,
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
