@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../middlewares/auth.middleware.js";
-import uploadOnCloudinary from "../utils/cloudinary.js";
+import { deleteFileOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessToken = async (userId: string): Promise<string> => {
   try {
@@ -165,6 +165,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     throw new ApiError(404, "User not found");
+  }
+
+  if(user.photo) {
+    await deleteFileOnCloudinary(user.photo);
   }
 
   return res

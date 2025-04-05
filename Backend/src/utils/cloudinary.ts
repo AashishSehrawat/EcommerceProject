@@ -1,6 +1,7 @@
 import {v2 as cloudinary} from "cloudinary";
 import fs from "fs";
 import dotenv from "dotenv";
+import { ApiError } from "./ApiError.js";
 dotenv.config();
 
 cloudinary.config({
@@ -34,4 +35,18 @@ const uploadOnCloudinary = async (localFilePath: string) => {
     }  
 }
 
-export default uploadOnCloudinary;
+const deleteFileOnCloudinary = async (urlOfFile: string) => {
+    try {
+        const publicId = urlOfFile.split('/').pop()?.split('.')[0];
+        if(!publicId) {
+            throw new ApiError(404, "publicId is not found for deleteing the file from cloudinary");
+        }
+
+        await cloudinary.uploader.destroy(publicId);
+        console.log("File deleted successfully")
+    } catch (error) {
+        console.log("Error in deleting file from cloudinary", error);
+    }
+}
+
+export { uploadOnCloudinary, deleteFileOnCloudinary };
