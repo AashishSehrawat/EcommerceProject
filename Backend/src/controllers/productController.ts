@@ -10,7 +10,7 @@ import { AuthRequest } from "../middlewares/auth.middleware.js";
 import fs from "fs";
 import { productQuery } from "../types/types.js";
 import { nodeCache } from "../app.js";
-import { invalidateCache } from "../utils/revalidate.js";
+import { invalidateCache } from "../utils/features.js";
 
 const newProduct = asyncHandler(async (req: AuthRequest, res) => {
   const { title, price, stock, category } = req.body;

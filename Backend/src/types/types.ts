@@ -1,3 +1,5 @@
+import { Types } from "mongoose"
+
 type getAllProducts = {
     search? : string,
     price? : string,
@@ -23,4 +25,20 @@ type invalidateCacheProp = {
     admin? :boolean,
 }
 
-export { getAllProducts, productQuery, invalidateCacheProp }
+type orderItemsProps = {
+    title: string,
+    photo: string,
+    price: number,
+    quantity: number,
+    productID: Types.ObjectId,
+}
+
+type shippingOrderInfoProps = {
+    address: string,
+    city: string,
+    state: string,
+    country: string,
+    pincode: number,
+}
+
+export { getAllProducts, productQuery, invalidateCacheProp, orderItemsProps, shippingOrderInfoProps }
