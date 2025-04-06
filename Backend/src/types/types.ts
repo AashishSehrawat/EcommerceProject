@@ -17,4 +17,10 @@ type productQuery = {
     category?: string,
 }
 
-export { getAllProducts, productQuery }
+type invalidateCacheProp = {
+    product? : boolean,
+    order? :boolean,
+    admin? :boolean,
+}
+
+export { getAllProducts, productQuery, invalidateCacheProp }

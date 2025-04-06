@@ -9,6 +9,8 @@ import {
 import { AuthRequest } from "../middlewares/auth.middleware.js";
 import fs from "fs";
 import { productQuery } from "../types/types.js";
+import { nodeCache } from "../app.js";
+import { invalidateCache } from "../utils/revalidate.js";
 
 const newProduct = asyncHandler(async (req: AuthRequest, res) => {
   const { title, price, stock, category } = req.body;
@@ -51,6 +53,8 @@ const newProduct = asyncHandler(async (req: AuthRequest, res) => {
     productPhoto: uploadPhoto.url,
   });
 
+  await invalidateCache({product: true});
+
   const populateProduct = await Product.findById(product._id).populate(
     "createdBy",
     "name"
@@ -63,8 +67,17 @@ const newProduct = asyncHandler(async (req: AuthRequest, res) => {
     );
 });
 
+// revaildate on new, update, delete of product and also on setting order
 const getLatestProduct = asyncHandler(async (req, res) => {
-  const product = await Product.find().sort({ createdAt: -1 }).limit(5);
+  let product = [];
+
+  if (nodeCache.has("latestProduct")) {
+    product = JSON.parse(nodeCache.get("latestProduct") as string);
+  } else {
+    product = await Product.find().sort({ createdAt: -1 }).limit(5);
+    nodeCache.set("latestProduct", JSON.stringify(product));
+  }
+
   if (product.length <= 0) {
     throw new ApiError(404, "Latest Product not found");
   }
@@ -74,8 +87,17 @@ const getLatestProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Latest Product feched successfully", product));
 });
 
+// revaildate on new, update, delete of product and also on setting order
 const getAllCatogries = asyncHandler(async (req, res) => {
-  const categories = await Product.distinct("category");
+  let categories;
+
+  if (nodeCache.has("categories")) {
+    categories = JSON.parse(nodeCache.get("categories") as string);
+  } else {
+    categories = await Product.distinct("category");
+    nodeCache.set("categories", JSON.stringify(categories));
+  }
+
   if (!categories) {
     throw new ApiError(404, "No categories found");
   }
@@ -87,8 +109,17 @@ const getAllCatogries = asyncHandler(async (req, res) => {
     );
 });
 
+// revaildate on new, update, delete of product and also on setting order
 const getAdminProduct = asyncHandler(async (req, res) => {
-  const products = await Product.find({});
+  let products;
+
+  if (nodeCache.has("adminProducts")) {
+    products = JSON.parse(nodeCache.get("adminProducts") as string);
+  } else {
+    products = await Product.find({});
+    nodeCache.set("adminProducts", JSON.stringify(products));
+  }
+
   if (!products) {
     throw new ApiError(404, "No Product found for admin");
   }
@@ -98,15 +129,24 @@ const getAdminProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "All products feched for admin", products));
 });
 
+// revaildate on new, update, delete of product and also on setting order
 const getSingleProduct = asyncHandler(async (req, res) => {
   const productId = req.params._id;
   if (!productId) {
     throw new ApiError(404, "Product is not found or Invalid");
   }
 
-  const product = await Product.findById(productId);
-  if (!product) {
-    throw new ApiError(404, "Product is not found");
+  let product;
+  if (nodeCache.has(`product${productId}`)) {
+    product = JSON.parse(nodeCache.get(`product${productId}`) as string);
+  } else {
+    product = await Product.findById(productId);
+
+    if (!product) {
+      throw new ApiError(404, "Product is not found");
+    }
+
+    nodeCache.set(`product${productId}`, JSON.stringify(product));
   }
 
   return res
@@ -160,6 +200,8 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   await product.save();
 
+  await invalidateCache({product: true});
+
   return res
     .status(200)
     .json(new ApiResponse(200, "All Data is updated successfully", product));
@@ -181,6 +223,8 @@ const deleteProduct = asyncHandler(async (req, res) => {
   if (!deletedProduct) {
     throw new ApiError(404, "Product is not found for deletion");
   }
+
+  await invalidateCache({product: true});
 
   return res
     .status(200)
@@ -222,14 +266,12 @@ const getProductBySearch = asyncHandler(async (req, res) => {
     throw new ApiError(404, "No products found by these parameters");
   }
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, "All products feched for given conditions", {
-        products,
-        totalPages
-      })
-    );
+  return res.status(200).json(
+    new ApiResponse(200, "All products feched for given conditions", {
+      products,
+      totalPages,
+    })
+  );
 });
 
 export {
