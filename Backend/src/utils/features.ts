@@ -3,16 +3,27 @@ import { Product } from "../models/productModel.js";
 import { invalidateCacheProp, orderItemsProps } from "../types/types.js"
 import { ApiError } from "./ApiError.js";
 
-const invalidateCache = async ({product, order, admin} : invalidateCacheProp) => {
-    const productKeys = ["latestProduct" , "categories" , "adminProducts"];
+const invalidateCache = async ({product, order, admin, userId, orderId, productId} : invalidateCacheProp) => {
+    if(product){
+        const productKeys = ["latestProduct" , "categories" , "adminProducts", `product${productId}`];
 
-    const productIds = await Product.find({}).select("_id");
+        if(typeof productId === "string") productKeys.push(`product-${productId}`);
+        
+        if(typeof productId === "object") productId.forEach(i => productKeys.push(`product-${i}`));
 
-    productIds.forEach(i => {
-        productKeys.push(`product${i._id}`);
-    })
+        nodeCache.del(productKeys);
+    }
 
-    nodeCache.del(productKeys);
+    if(order) {
+        const orderKeys = ["adminOrders", `myOrders-${userId}`, `order-${orderId}`];
+
+        nodeCache.del(orderKeys);
+    }
+
+    if(admin) {
+
+    }
+
 }
 
 

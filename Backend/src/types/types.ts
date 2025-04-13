@@ -23,6 +23,9 @@ type invalidateCacheProp = {
     product? : boolean,
     order? :boolean,
     admin? :boolean,
+    userId?: string,
+    orderId?: string,
+    productId?: string | string[],
 }
 
 type orderItemsProps = {

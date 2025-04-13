@@ -10,6 +10,7 @@ import NodeCache from "node-cache";
 import userRoute from './routes/userRoute.js';
 import productRoute from "./routes/productRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
+import paymentRoutes from "./routes/paymentRoute.js";
 
 
 
@@ -31,6 +32,7 @@ export const nodeCache = new NodeCache();
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/payment", paymentRoutes);
 
 
 app.get("/", (req, res) => {
