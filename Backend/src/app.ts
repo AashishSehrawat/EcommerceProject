@@ -11,7 +11,7 @@ import userRoute from './routes/userRoute.js';
 import productRoute from "./routes/productRoutes.js";
 import orderRoutes from './routes/orderRoutes.js';
 import paymentRoutes from "./routes/paymentRoute.js";
-
+import statsRoutes from "./routes/statsRoutes.js";
 
 
 
@@ -33,6 +33,7 @@ app.use("/api/v1/user", userRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoutes);
+app.use("/api/v1/dashboard", statsRoutes);
 
 
 app.get("/", (req, res) => {
