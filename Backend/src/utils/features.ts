@@ -40,5 +40,12 @@ const reduceStock = async (orderItems: orderItemsProps[]) => {
 }
 
 
+const percentageCalculate = (thisMonth: number, lastMonth: number) => {
+    if(lastMonth === 0) return thisMonth*100;
+    const percent = (thisMonth - lastMonth)/lastMonth*100;
+    return Number(percent.toFixed(0));
+}
 
-export {invalidateCache, reduceStock}
+
+
+export {invalidateCache, reduceStock, percentageCalculate}
