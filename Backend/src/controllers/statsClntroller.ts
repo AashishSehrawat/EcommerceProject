@@ -8,9 +8,10 @@ import { percentageCalculate } from "../utils/features.js";
 
 const getDashboardStats = asyncHandler(async (req, res) => {
   let stats = {};
+  const key = "admin-stats";
 
-  if (nodeCache.has("admin-stats")) {
-    stats = JSON.parse(nodeCache.get("admin-stats") as string);
+  if (nodeCache.has(key)) {
+    stats = JSON.parse(nodeCache.get(key) as string);
   } else {
     const today = new Date();
     const sixMonthAgo = new Date();
@@ -155,7 +156,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 
     lastSixMonthOrders.forEach((order) => {
       const creationDate = order.createdAt;
-      const monthDiff = today.getMonth() - creationDate.getMonth();
+      const monthDiff = (today.getMonth() - creationDate.getMonth() + 12)%12;
 
       if (monthDiff < 6) {
         orderMonthCount[6 - monthDiff - 1] += 1;
@@ -207,7 +208,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
       chart,
     };
 
-    nodeCache.set("admin-stats", JSON.stringify(stats));
+    nodeCache.set(key, JSON.stringify(stats));
   }
 
   return res
@@ -217,9 +218,10 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 
 const getPieChart = asyncHandler(async (req, res) => {
   let charts = {};
+  const key = "admin-pie-chart";
 
-  if (nodeCache.has("admin-pie-chart")) {
-    charts = JSON.parse(nodeCache.get("admin-pie-chart") as string);
+  if (nodeCache.has(key)) {
+    charts = JSON.parse(nodeCache.get(key) as string);
   } else {
     const [
       deliveredCount,
@@ -307,7 +309,7 @@ const getPieChart = asyncHandler(async (req, res) => {
       adminUserCount,
     };
 
-    nodeCache.set("admin-pie-chart", JSON.stringify(charts));
+    nodeCache.set(key, JSON.stringify(charts));
   }
 
   return res
@@ -315,7 +317,63 @@ const getPieChart = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Pie Chart data feched successfully", charts));
 });
 
-const getBarChart = asyncHandler(async (req, res) => {});
+const getBarChart = asyncHandler(async (req, res) => {
+  let charts;
+  const key = "admin-bar-chart";
+
+  if(nodeCache.has(key)) charts = JSON.parse(nodeCache.get(key) as string)
+  else {
+    const today = new Date();
+
+    const sixMonthAgo = new Date();
+    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6);
+
+    const twelveMonthAgo = new Date();
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12);
+
+    const lastSixMonthProductsPromise = Product.find({
+      createdAt: {
+        $gte: sixMonthAgo,
+        $lte: today
+      }
+    });
+
+    const lastSixMonthUsersPromise = User.find({
+      createdAt: {
+        $gte: sixMonthAgo,
+        $lte: today,
+      }
+    });
+
+    const lastTwelveMonthOrdersPromise = Order.find({
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      }
+    })
+
+    const [
+      lastSixMonthProducts,
+      lastSixMonthUsers,
+      lastTwelveMonthOrders,
+    ] = await Promise.all([
+      lastSixMonthProductsPromise,
+      lastSixMonthUsersPromise,
+      lastTwelveMonthOrdersPromise,
+
+    ])
+
+    charts = {
+
+    }
+
+    nodeCache.set(key, JSON.stringify(charts));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Bar Chart data feched", charts));
+});
 
 const getLineChart = asyncHandler(async (req, res) => {});
 
