@@ -4,7 +4,7 @@ import express from "express";
 import connectDB from "./db/index.js";
 import cookieParser from "cookie-parser";
 import NodeCache from "node-cache";
-
+import Stripe from "stripe";
 
 // import user routes
 import userRoute from './routes/userRoute.js';
@@ -15,7 +15,9 @@ import statsRoutes from "./routes/statsRoutes.js";
 
 
 
+
 const port = process.env.PORT || 3000;
+const stripeKey = process.env.STRIPE_KEY || "";
 const app = express();
 
 app.use(express.json()); 
@@ -24,6 +26,9 @@ app.use(cookieParser());
 
 // connect the database
 connectDB();
+
+// payment gateway using stripe
+export const stripe = new Stripe(stripeKey);
 
 // using node cache
 export const nodeCache = new NodeCache();

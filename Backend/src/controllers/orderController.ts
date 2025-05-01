@@ -50,7 +50,7 @@ const registerOrder = asyncHandler(async (req, res) => {
 
   await reduceStock(orderItems);
 
-  await invalidateCache({
+  invalidateCache({
     product: true,
     order: true,
     admin: true,
@@ -151,7 +151,7 @@ const processOrder = asyncHandler(async (req, res) => {
 
   await order.save();
 
-  await invalidateCache({
+  invalidateCache({
     product: false,
     order: true,
     admin: true,
@@ -171,7 +171,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Order not found for deletion");
   }
 
-  await invalidateCache({
+  invalidateCache({
     product: false,
     order: true,
     admin: true,

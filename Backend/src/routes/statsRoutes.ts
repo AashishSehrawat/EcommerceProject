@@ -1,6 +1,6 @@
 import express from "express";
 import { adminOnly, verifyJWT } from "../middlewares/auth.middleware.js";
-import { getBarChart, getDashboardStats, getLineChart, getPieChart } from "../controllers/statsClntroller.js";
+import { getBarChart, getDashboardStats, getLineChart, getPieChart } from "../controllers/statsController.js";
 
 const app = express.Router();
 

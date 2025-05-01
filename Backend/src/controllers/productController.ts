@@ -53,7 +53,7 @@ const newProduct = asyncHandler(async (req: AuthRequest, res) => {
     productPhoto: uploadPhoto.url,
   });
 
-  await invalidateCache({product: true, productId: String(product._id)});
+  invalidateCache({product: true, admin: true, productId: String(product._id)});
 
   const populateProduct = await Product.findById(product._id).populate(
     "createdBy",
@@ -200,7 +200,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 
   await product.save();
 
-  await invalidateCache({product: true, productId: String(product._id)});
+  invalidateCache({product: true, admin: true, productId: String(product._id)});
 
   return res
     .status(200)
@@ -224,7 +224,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Product is not found for deletion");
   }
 
-  await invalidateCache({product: true, productId: String(product._id)});
+  invalidateCache({product: true, admin: true, productId: String(product._id)});
   return res
     .status(200)
     .json(

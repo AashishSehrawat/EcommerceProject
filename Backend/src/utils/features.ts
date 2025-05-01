@@ -2,8 +2,9 @@ import { nodeCache } from "../app.js";
 import { Product } from "../models/productModel.js";
 import { invalidateCacheProp, orderItemsProps } from "../types/types.js"
 import { ApiError } from "./ApiError.js";
+import { Document } from "mongoose";
 
-const invalidateCache = async ({product, order, admin, userId, orderId, productId} : invalidateCacheProp) => {
+const invalidateCache = ({product, order, admin, userId, orderId, productId} : invalidateCacheProp) => {
     if(product){
         const productKeys = ["latestProduct" , "categories" , "adminProducts", `product${productId}`];
 
@@ -21,7 +22,7 @@ const invalidateCache = async ({product, order, admin, userId, orderId, productI
     }
 
     if(admin) {
-
+        nodeCache.del(["admin-stats", "admin-pie-chart", "admin-bar-chart", "admin-line-chart"])
     }
 
 }
@@ -46,6 +47,37 @@ const percentageCalculate = (thisMonth: number, lastMonth: number) => {
     return Number(percent.toFixed(0));
 }
 
+interface MyDocument extends Document {
+    createdAt: Date,
+    discount?: number,
+    total?: number,
+}
 
+type funcProps = {
+    length: number,
+    docArr: MyDocument[],
+    today: Date,
+    property?: "discount" | "total",
+}
 
-export {invalidateCache, reduceStock, percentageCalculate}
+const getChartData = ({length, docArr, today, property}: funcProps) => {
+    const data: number[] = new Array(length).fill(0);
+
+    docArr.forEach(i => {
+        const creationDate = i.createdAt;
+        const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+
+        if(monthDiff < length) {
+            if(property) {
+                data[length - monthDiff - 1] += i[property]!;
+            } else {
+                data[length - monthDiff - 1] += 1;
+            }
+            
+        }
+    })
+
+    return data;
+}
+
+export {invalidateCache, reduceStock, percentageCalculate, getChartData}

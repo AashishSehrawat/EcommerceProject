@@ -4,7 +4,7 @@ import { Product } from "../models/productModel.js";
 import { User } from "../models/userModel.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { percentageCalculate } from "../utils/features.js";
+import { getChartData, percentageCalculate } from "../utils/features.js";
 
 const getDashboardStats = asyncHandler(async (req, res) => {
   let stats = {};
@@ -156,7 +156,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
 
     lastSixMonthOrders.forEach((order) => {
       const creationDate = order.createdAt;
-      const monthDiff = (today.getMonth() - creationDate.getMonth() + 12)%12;
+      const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
 
       if (monthDiff < 6) {
         orderMonthCount[6 - monthDiff - 1] += 1;
@@ -240,11 +240,11 @@ const getPieChart = asyncHandler(async (req, res) => {
       Order.countDocuments({ status: "Shipped" }),
       Product.distinct("category"),
       Product.countDocuments(),
-      Product.countDocuments({stock: 0}),
+      Product.countDocuments({ stock: 0 }),
       Order.find({}).select("total discount subTotal tax shippingCharges"),
       User.find({}).select("dob"),
-      User.countDocuments({role: "admin"}),
-      User.countDocuments({role: "user"}),
+      User.countDocuments({ role: "admin" }),
+      User.countDocuments({ role: "user" }),
     ]);
 
     const orderFullfillment = {
@@ -271,14 +271,24 @@ const getPieChart = asyncHandler(async (req, res) => {
     const stockAvaliability = {
       inStock: productCount - outOfStockProductCount,
       outOfStock: outOfStockProductCount,
-    }
+    };
 
-    const grossIncome = allOrders.reduce((prev, order) => prev + (order.total || 0), 0);
-    const discount = allOrders.reduce((prev, order) => prev + (order.discount || 0), 0);
-    const productionCost = allOrders.reduce((prev, order) => prev + (order.shippingCharges || 0), 0);
+    const grossIncome = allOrders.reduce(
+      (prev, order) => prev + (order.total || 0),
+      0
+    );
+    const discount = allOrders.reduce(
+      (prev, order) => prev + (order.discount || 0),
+      0
+    );
+    const productionCost = allOrders.reduce(
+      (prev, order) => prev + (order.shippingCharges || 0),
+      0
+    );
     const burnt = allOrders.reduce((prev, order) => prev + (order.tax || 0), 0);
     const marketingCost = grossIncome * (30 / 100);
-    const netMargin = grossIncome - discount - productionCost - burnt - marketingCost;
+    const netMargin =
+      grossIncome - discount - productionCost - burnt - marketingCost;
 
     const revenueDistribution = {
       netMargin: netMargin,
@@ -286,19 +296,18 @@ const getPieChart = asyncHandler(async (req, res) => {
       productCost: productionCost,
       burnt: burnt,
       marketingCost: marketingCost,
-    }
+    };
 
     const userAgeGroup = {
-      teen: allUsers.filter(i => i.age < 20).length,
-      adult: allUsers.filter(i => i.age >= 20 && i.age < 40).length,
-      old: allUsers.filter(i => i.age >= 40).length,
-    }
+      teen: allUsers.filter((i) => i.age < 20).length,
+      adult: allUsers.filter((i) => i.age >= 20 && i.age < 40).length,
+      old: allUsers.filter((i) => i.age >= 40).length,
+    };
 
     const adminUserCount = {
       admin: adminCount,
       user: userCount,
-    }
-
+    };
 
     charts = {
       orderFullfillment,
@@ -321,7 +330,7 @@ const getBarChart = asyncHandler(async (req, res) => {
   let charts;
   const key = "admin-bar-chart";
 
-  if(nodeCache.has(key)) charts = JSON.parse(nodeCache.get(key) as string)
+  if (nodeCache.has(key)) charts = JSON.parse(nodeCache.get(key) as string);
   else {
     const today = new Date();
 
@@ -334,38 +343,52 @@ const getBarChart = asyncHandler(async (req, res) => {
     const lastSixMonthProductsPromise = Product.find({
       createdAt: {
         $gte: sixMonthAgo,
-        $lte: today
-      }
-    });
+        $lte: today,
+      },
+    }).select("createdAt");
 
     const lastSixMonthUsersPromise = User.find({
       createdAt: {
         $gte: sixMonthAgo,
         $lte: today,
-      }
-    });
+      },
+    }).select("createdAt");
 
     const lastTwelveMonthOrdersPromise = Order.find({
       createdAt: {
         $gte: twelveMonthAgo,
         $lte: today,
-      }
-    })
+      },
+    }).select("createdAt");
 
-    const [
-      lastSixMonthProducts,
-      lastSixMonthUsers,
-      lastTwelveMonthOrders,
-    ] = await Promise.all([
-      lastSixMonthProductsPromise,
-      lastSixMonthUsersPromise,
-      lastTwelveMonthOrdersPromise,
+    const [lastSixMonthProducts, lastSixMonthUsers, lastTwelveMonthOrders] =
+      await Promise.all([
+        lastSixMonthProductsPromise,
+        lastSixMonthUsersPromise,
+        lastTwelveMonthOrdersPromise,
+      ]);
 
-    ])
+    const productCounts = getChartData({
+      length: 6,
+      today,
+      docArr: lastSixMonthProducts,
+    });
+    const userCounts = getChartData({
+      length: 6,
+      today,
+      docArr: lastSixMonthUsers,
+    });
+    const ordersCounts = getChartData({
+      length: 12,
+      today,
+      docArr: lastTwelveMonthOrders,
+    });
 
     charts = {
-
-    }
+      product: productCounts,
+      user: userCounts,
+      order: ordersCounts,
+    };
 
     nodeCache.set(key, JSON.stringify(charts));
   }
@@ -375,6 +398,66 @@ const getBarChart = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Bar Chart data feched", charts));
 });
 
-const getLineChart = asyncHandler(async (req, res) => {});
+const getLineChart = asyncHandler(async (req, res) => {
+  let charts;
+  const key = "admin-line-chart";
+
+  if (nodeCache.has(key)) charts = JSON.parse(nodeCache.get(key) as string);
+  else {
+    const today = new Date();
+
+    const twelveMonthAgo = new Date();
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12);
+
+    const lastTwelveMonthProductsPromise = Product.find({
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      },
+    }).select("createdAt");
+
+    const lastTwelveMonthUsersPromise = User.find({
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      },
+    }).select("createdAt");
+
+    const lastTwelveMonthOrdersPromise = Order.find({
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      },
+    }).select("createdAt discount total");
+
+    const [
+      lastTwelveMonthProducts,
+      lastTwelveMonthUsers,
+      lastTwelveMonthOrders,
+    ] = await Promise.all([
+      lastTwelveMonthProductsPromise,
+      lastTwelveMonthUsersPromise,
+      lastTwelveMonthOrdersPromise,
+    ]);
+
+    const productsCount = getChartData({length: 12, docArr: lastTwelveMonthProducts, today});
+    const usersCount = getChartData({length: 12, docArr: lastTwelveMonthUsers, today});
+    const discount = getChartData({length:12, docArr: lastTwelveMonthOrders, today, property: "discount"});
+    const revenue = getChartData({length: 12, docArr: lastTwelveMonthOrders, today, property: "total"});
+
+    charts = {
+      users: usersCount,
+      products: productsCount,
+      discount,
+      revenue, 
+    }
+
+    nodeCache.set(key, JSON.stringify(charts));
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "line chart is feched", charts));
+});
 
 export { getDashboardStats, getPieChart, getBarChart, getLineChart };
