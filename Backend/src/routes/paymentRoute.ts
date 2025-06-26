@@ -22,6 +22,8 @@ app.get("/discount", verifyJWT, applyDiscount);
 // route - /api/v1/payment/coupon/all
 app.get("/coupon/all", verifyJWT, adminOnly, getAllCoupon);
 
+app.get("/coupon/:_id", verifyJWT, adminOnly);
+
 // route - /api/v1/payment/coupon/delete
 app.delete("/coupon/:_id", verifyJWT, adminOnly, deleteCoupon);
 

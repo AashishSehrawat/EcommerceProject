@@ -10,7 +10,7 @@ app.post("/new", verifyJWT, adminOnly, upload.fields([
     {
         name: "productPhoto",
         maxCount: 1,
-    },
+    }, 
 ]), newProduct);
 
 // route - /api/v1/product/latest

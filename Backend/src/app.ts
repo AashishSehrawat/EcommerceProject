@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
 
+
 // import user routes
 import userRoute from './routes/userRoute.js';
 import productRoute from "./routes/productRoutes.js";
@@ -15,12 +16,12 @@ import statsRoutes from "./routes/statsRoutes.js";
 
 
 
-
 const port = process.env.PORT || 3000;
 const stripeKey = process.env.STRIPE_KEY || "";
 const app = express();
 
 app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
 

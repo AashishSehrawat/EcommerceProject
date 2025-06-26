@@ -8,6 +8,16 @@ interface AuthRequest extends Request {
   user?: IUser;
 }
 
+const tokenBlacklist = new Set<string>();
+
+export const addToBlacklist = (token: string) => {
+  tokenBlacklist.add(token);  
+}
+
+export const removeFromBlacklist = (token: string) => {
+  tokenBlacklist.delete(token);
+};
+
 // check if user is logged in or not
 const verifyJWT = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -20,6 +30,11 @@ const verifyJWT = asyncHandler(
         401,
         "Unauthorized access: No token provided or Please login"
       );
+    }
+
+    if(tokenBlacklist.has(token)) {
+      removeFromBlacklist(token);
+      throw new ApiError(401, "Unauthorized access: Token is blacklisted");
     }
 
     if (!process.env.ACCESS_TOKEN_SECRET) {

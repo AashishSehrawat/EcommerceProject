@@ -70,7 +70,7 @@ const newProduct = asyncHandler(async (req: AuthRequest, res) => {
 // revaildate on new, update, delete of product and also on setting order
 const getLatestProduct = asyncHandler(async (req, res) => {
   let product = [];
-
+  // check if the latest product is in cache 
   if (nodeCache.has("latestProduct")) {
     product = JSON.parse(nodeCache.get("latestProduct") as string);
   } else {
@@ -138,7 +138,7 @@ const getSingleProduct = asyncHandler(async (req, res) => {
 
   let product;
   if (nodeCache.has(`product-${productId}`)) {
-    product = JSON.parse(nodeCache.get(`product${productId}`) as string);
+    product = JSON.parse(nodeCache.get(`product-${productId}`) as string);
   } else {
     product = await Product.findById(productId);
 
@@ -146,7 +146,7 @@ const getSingleProduct = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Product is not found");
     }
 
-    nodeCache.set(`product${productId}`, JSON.stringify(product));
+    nodeCache.set(`product-${productId}`, JSON.stringify(product));
   }
 
   return res
@@ -232,11 +232,11 @@ const deleteProduct = asyncHandler(async (req, res) => {
     );
 });
 
-const getProductBySearch = asyncHandler(async (req, res) => {
+const getProductBySearch = asyncHandler(async (req, res) => { 
   const { search, price, sort, category } = req.query;
 
   const page = Number(req.query.page) || 1;
-  const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+  const limit = Number(process.env.PRODUCT_PER_PAGE) || 8; 
   const skip = limit * (page - 1);
 
   const query: productQuery = {};

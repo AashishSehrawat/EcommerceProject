@@ -6,6 +6,7 @@ interface IUser extends Document {
     _id: string,
     name: string,
     email: string,
+    password: string,
     photo: string,
     role: "admin" | "user",
     gender: "male" | "female",
@@ -58,7 +59,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please enter DOB"],
     },
   },
-  { timestamps: true }
+  { timestamps: true } 
 );
 
 userSchema.virtual("age").get(function () {

@@ -84,6 +84,26 @@ a {
       }
     }
 
+    .authButtons{
+      @include flex(row, unset, center, .5rem);
+    }
+
+    .logInButton, .signInButton {
+      background-color: $colorBlue;
+      color: white;
+      border: none;
+      outline: none;
+      font-size: 1.05rem;
+      padding: 5px 10px;
+      transition: all .3s;
+      border-radius: 20px;
+      cursor: pointer;
+      &:hover {
+        color: white;
+        background-color: black;
+      }
+    }
+
     dialog {
       border: 1px solid rgb(209, 209, 209);
       border-radius: 8px;

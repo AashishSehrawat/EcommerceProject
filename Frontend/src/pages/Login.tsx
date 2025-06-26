@@ -1,24 +1,28 @@
 import { FaGoogle } from "react-icons/fa6";
 
 const Login = () => {
+
+  const submitHandler = () => {
+    // Handle login logic here
+  };
+
   return (
     <div className="login container">
       <div>
         <h1>Login</h1>
-        <div className="inputLogin">
+        <form className="inputLogin">
           <div>
-            <label>Gender</label>
-            <select name="gender" required>
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Email" required />
           </div>
           <div>
-            <label>Date of Birth</label>
-            <input type="date" required />
+            <label>Password</label>
+            <input type="password" required />
           </div>
-        </div>
+          <div>
+            <button className="button" onSubmit={submitHandler} type="submit">Login</button>
+          </div>
+        </form>
 
         <div className="googleLogin">
           <p>Already Signed in once</p>

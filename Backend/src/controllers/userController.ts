@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-import { AuthRequest } from "../middlewares/auth.middleware.js";
+import { addToBlacklist, AuthRequest } from "../middlewares/auth.middleware.js";
 import { deleteFileOnCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const generateAccessToken = async (userId: string): Promise<string> => {
@@ -60,7 +60,7 @@ const newUser = asyncHandler(async (req, res) => {
     // Now we know it's the { [fieldname: string]: Multer.File[] } format
     if (req.files.photo[0] && req.files.photo.length > 0) {
         photoLocalPath = req.files.photo[0].path;
-    } else {
+    } else { 
         throw new ApiError(401, "Photo is required");
     }
   } else {
@@ -97,6 +97,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email });
+  console.log("hello", user);
   if (!user) {
     throw new ApiError(404, "user not found");
   }
@@ -128,6 +129,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const logoutUser = asyncHandler(async (req: AuthRequest, res) => {
   const user = req.user;
+
+  const token = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+  if(token) {
+    addToBlacklist(token);
+  }
   
   const options = {
     httpOnly: true,

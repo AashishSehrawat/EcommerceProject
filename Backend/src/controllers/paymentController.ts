@@ -11,14 +11,22 @@ const createPaymentIntent = asyncHandler(async(req , res) => {
         throw new ApiError(404, "Please enter amount")
     };
 
-    const paymentIntent = await stripe.paymentIntents.create({amount: Number(amount) * 100 , currency: "inr"})
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: Number(amount) * 100, 
+        currency: "inr"
+    })
     if(!paymentIntent) {
         throw new ApiError(404, "Error creating payment Intent")
     }
 
+    const clientSecret = paymentIntent.client_secret;
+    if(!clientSecret) {
+        throw new ApiError(404, "Client secret is not found"); 
+    }
+
     return res
         .status(200)
-        .json(new ApiResponse(200, "Payment successfull", paymentIntent));  
+        .json(new ApiResponse(200, "Payment successfull", clientSecret));  
 })
 
 const newCoupon = asyncHandler(async(req , res) => {
@@ -28,7 +36,7 @@ const newCoupon = asyncHandler(async(req , res) => {
     }
 
     const generatedCoupon = await Coupon.create({coupon, amount});
-    if(!generatedCoupon) {
+    if(!generatedCoupon) {  
         throw new ApiError(404, "Coupon generation failed");
     }
 

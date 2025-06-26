@@ -89,7 +89,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
       lastMonthOrders,
       usersCount,
       productsCount,
-      ordersCount,
+      ordersCount, 
       lastSixMonthOrders,
       categories,
       maleCount,
@@ -216,7 +216,7 @@ const getDashboardStats = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Stats of dashboard feched", stats));
 });
 
-const getPieChart = asyncHandler(async (req, res) => {
+const getPieChart = asyncHandler(async (req, res) => { 
   let charts = {};
   const key = "admin-pie-chart";
 
@@ -286,7 +286,7 @@ const getPieChart = asyncHandler(async (req, res) => {
       0
     );
     const burnt = allOrders.reduce((prev, order) => prev + (order.tax || 0), 0);
-    const marketingCost = grossIncome * (30 / 100);
+    const marketingCost = Math.round(grossIncome * (30 / 100)); 
     const netMargin =
       grossIncome - discount - productionCost - burnt - marketingCost;
 

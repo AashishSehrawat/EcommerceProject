@@ -25,8 +25,7 @@ const registerOrder = asyncHandler(async (req, res) => {
       orderItems,
       subTotal,
       tax,
-      shippingOrderInfo,
-      discount,
+      shippingOrderInfo, 
       total,
     ].some((field) => field.trim == "")
   ) {
@@ -75,7 +74,7 @@ const myOrders = asyncHandler(async (req, res) => {
   else {
     orders = await Order.find({ user: _id });
     nodeCache.set(key, JSON.stringify(orders));
-  }
+  } 
   if (!orders) {
     throw new ApiError(404, "No orders found");
   }

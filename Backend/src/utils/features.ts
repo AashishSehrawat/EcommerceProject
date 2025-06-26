@@ -4,9 +4,9 @@ import { invalidateCacheProp, orderItemsProps } from "../types/types.js"
 import { ApiError } from "./ApiError.js";
 import { Document } from "mongoose";
 
-const invalidateCache = ({product, order, admin, userId, orderId, productId} : invalidateCacheProp) => {
+const invalidateCache = ({product, order, admin, userId, orderId, productId} : invalidateCacheProp) => {   
     if(product){
-        const productKeys = ["latestProduct" , "categories" , "adminProducts", `product${productId}`];
+        const productKeys = ["latestProduct" , "categories" , "adminProducts"];
 
         if(typeof productId === "string") productKeys.push(`product-${productId}`);
         
