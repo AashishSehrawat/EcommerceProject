@@ -1,7 +1,9 @@
+@use "admin/mixin" as mx;
+
 .search {
     width: 100%;
     height: 91vh;
-    @include flex(row, unset, unset, );
+    @include mx.flex(row, unset, unset, );
     > aside {
         width: 20%;
         border-radius: 8px;
@@ -14,9 +16,9 @@
                 margin-bottom: 1rem;
             }
             > .filteredBySearch {
-                @include flex(column, unset, unset, .5rem);
+                @include mx.flex(column, unset, unset, .5rem);
                 > div {
-                    @include flex(column, unset, unset, 0.2rem);
+                    @include mx.flex(column, unset, unset, 0.2rem);
                     > label {
                         font-weight: 700;
                     }
@@ -43,7 +45,7 @@
             margin-bottom: 1rem;
         }
         > div {
-            @include flex(column, unset, unset, 1.5rem);
+            @include mx.flex(column, unset, unset, 1.5rem);
             overflow-x: hidden;
             > .searchBar > input {
                 width: 100%;
@@ -63,7 +65,7 @@
             }
             > article {
                 text-align: center;
-                @include flex(row, center, center, .5rem);
+                @include mx.flex(row, center, center, .5rem);
                 > button {
                     background-color: #0085fb;
                     color: white;

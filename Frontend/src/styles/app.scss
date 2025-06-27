@@ -1,16 +1,16 @@
-@import "admin/mixin";
+@use "admin/mixin" as *;
 
-@import "home";
-@import "cart";
-@import "shipping";
-@import "login";
-@import "search";
-@import "orders";
-@import "admin/dashboard";
-@import "admin/products";
-@import "admin/chart";
-@import "admin/dashboardapp";
-@import "admin/mediaquery";
+@use "home";
+@use "cart";
+@use "shipping";
+@use "login";
+@use "search";
+@use "orders";
+@use "admin/dashboard";
+@use "admin/products";
+@use "admin/chart";
+@use "admin/dashboardapp";
+@use "admin/mediaquery";
 
 @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap");
 

@@ -1,20 +1,22 @@
+@use "admin/mixin" as mx;
+
 .login{
     width: 100%;
     height: 90vh;
-    @include flex();
+    @include mx.flex();
     > div {
         padding: 4rem 1.5rem;
         border-radius: 8px;
-        @include baseShadow();
-        @include flex(column, center, unset, 1rem);
+        @include mx.baseShadow();
+        @include mx.flex(column, center, unset, 1rem);
         h1 {
             color: gray;
             font-size: 2rem;
         }
         > .inputLogin {
-            @include flex(column, unset, unset, 1rem);
+            @include mx.flex(column, unset, unset, 1rem);
             > div {
-                @include flex(column, unset, unset, 0rem);
+                @include mx.flex(column, unset, unset, 0rem);
                 > input {
                     outline: none;
                     padding: 8px 16px;
@@ -23,16 +25,16 @@
                 }
             }
             > div > button {
-                @include mainButton();
+                @include mx.mainButton();
                 width: 100%;
                 margin-top: 1rem;
             }
         }
         > .googleLogin{
-            @include flex(column, center, center, .5rem);
+            @include mx.flex(column, center, center, .5rem);
             > button {
-                @include flex();
-                @include mainButton();
+                @include mx.flex();
+                @include mx.mainButton();
             }
         }
     }

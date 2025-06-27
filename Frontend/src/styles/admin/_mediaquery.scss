@@ -1,3 +1,5 @@
+@use "mixin" as *;
+
 @media screen and (width<= 1200px) {
   .admin-container {
     overflow: auto;
