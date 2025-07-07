@@ -5,6 +5,8 @@ import connectDB from "./db/index.js";
 import cookieParser from "cookie-parser";
 import NodeCache from "node-cache";
 import Stripe from "stripe";
+import cors from "cors";
+import morgan from "morgan";
 
 
 // import user routes
@@ -24,6 +26,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173", // Allow requests from the frontend URL
+    credentials: true, // Allow cookies to be sent
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(morgan("dev")); // logging middleware
 
 // connect the database
 connectDB();

@@ -1,7 +1,9 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {Toaster} from "react-hot-toast";
 import Loader from "./components/Loader";
 import Header from "./components/Header";
+import SignUp from "./pages/SignUp";
 
 const Home = lazy(() => import("./pages/Home"));
 const Search = lazy(() => import("./pages/Search"));
@@ -44,6 +46,7 @@ function App() {
 
           {/* Not logged in routes */}
           <Route path="/login" element={ <Login/> } />
+          <Route path="signUp" element={ <SignUp/> } />
 
 
           {/* Logged in user routes */}
@@ -84,6 +87,7 @@ function App() {
           ;
         </Routes>
       </Suspense>
+      <Toaster position="bottom-center" />
     </Router>
   );
 }
