@@ -261,9 +261,9 @@ const getProductBySearch = asyncHandler(async (req, res) => {
   const totalCount = await Product.countDocuments(query);
   const totalPages = Math.ceil(totalCount / limit);
 
-  if (products.length == 0) {
-    throw new ApiError(404, "No products found by these parameters");
-  }
+  // if (products.length == 0) {
+  //   throw new ApiError(404, "No products found by these parameters");
+  // }
 
   return res.status(200).json(
     new ApiResponse(200, "All products feched for given conditions", {

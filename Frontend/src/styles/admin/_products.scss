@@ -3,7 +3,7 @@
 .dashboard-product-box {
   background-color: white;
   padding: 2rem;
-  overflow: auto;
+  overflow-y: auto;
   @include square(100%);
 }
 
@@ -35,8 +35,10 @@
 }
 
 .product-management {
-  @include flex(row, center, unset);
-  padding: 4rem;
+  @include flex(row, center, center);
+  padding: 0 4rem;
+  overflow-y: scroll;
+  scrollbar-width: none;
 
   > section {
     overflow-y: auto;
@@ -82,8 +84,8 @@
   }
 
   > article {
-    height: 85vh;
-    padding: 2rem;
+    height: fit-content;
+    padding:  2rem;
     width: 100%;
     max-width: 400px;
     background-color: white;
@@ -116,7 +118,7 @@
         > input {
           @include inputStyle(
             100%,
-            1rem,
+            .5rem,
             unset,
             1px solid rgba(13, 13, 13, 0.196)
           );

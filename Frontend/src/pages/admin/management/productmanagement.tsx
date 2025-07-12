@@ -1,16 +1,29 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import AdminSidebar from "../../../components/admin/AdminSidebar";
+import { useDeleteProductMutation, useProductDetailsQuery, useUpdateProductMutation } from "../../../redux/api/productApi";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
-const img =
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
 
 const Productmanagement = () => {
-  const [price, setPrice] = useState<number>(2000);
-  const [stock, setStock] = useState<number>(10);
-  const [name, setName] = useState<string>("Puma Shoes");
-  const [photo, setPhoto] = useState<string>(img);
-  const [category, setCategory] = useState<string>("footwear");
+  const params = useParams();
+  const {data} = useProductDetailsQuery(params?.id || "");
+
+  const [updateProduct] = useUpdateProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
+
+  const navigate = useNavigate();
+
+  const [product, setProduct] = useState({
+    photo: "",
+    name: "", 
+    stock: 0,
+    price: 0,
+    category: ""
+  });
+
+  const {price, stock, name, category, photo} = product;
 
   const [priceUpdate, setPriceUpdate] = useState<number>(price);
   const [stockUpdate, setStockUpdate] = useState<number>(stock);
@@ -35,20 +48,77 @@ const Productmanagement = () => {
     }
   };
 
-  const submitHandler = (e: FormEvent<HTMLFormElement>): void => {
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setName(nameUpdate);
-    setPrice(priceUpdate);
-    setStock(stockUpdate);
-    setPhoto(photoUpdate);
+
+    try {
+      const formData = new FormData();
+      formData.append("title", nameUpdate);
+      formData.append("category", categoryUpdate);
+      formData.append("price", priceUpdate.toString());
+      formData.append("stock", stockUpdate.toString());
+      if (photoFile) {
+        formData.append("productPhoto", photoFile);
+      }
+
+      const res = await updateProduct({id: params.id || "", productData: formData}).unwrap();
+      if (res?.success) {
+        toast.success("Product updated successfully");
+        setNameUpdate("");
+        setCategoryUpdate("");
+        setPriceUpdate(0);
+        setStockUpdate(0);
+        setPhotoUpdate("");
+        setPhotoFile(undefined);
+        navigate("/admin/product");
+      } else {
+        toast.error(res.message || "Failed to update product. Please try again.");
+        return;
+      }
+    } catch (error) {
+      toast.error("Failed to update product. Please try again.");
+      return;
+    }
+
   };
+
+  const deleteHandler = async () => {
+    try {
+      const res = await deleteProduct(params.id || "").unwrap();
+      if (res?.success) {
+        toast.success("Product deleted successfully");
+        navigate("/admin/product");
+      } else {
+        toast.error(res.message || "Failed to delete product. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Failed to delete product. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    if(data) {
+      setProduct({
+        photo: data.data.productPhoto,
+        name: data.data.title,
+        stock: data.data.stock,
+        price: data.data.price,
+        category: data.data.category
+      });
+      setNameUpdate(data.data.title);
+      setPriceUpdate(data.data.price);
+      setStockUpdate(data.data.stock);
+      setCategoryUpdate(data.data.category);
+      setPhotoUpdate(data.data.productPhoto);
+    }
+  }, [data])
 
   return (
     <div className="admin-container">
       <AdminSidebar />
       <main className="product-management">
         <section>
-          <strong>ID - fsdfsfsggfgdf</strong>
+          <strong>ID - {data?.data._id}</strong>
           <img src={photo} alt="Product" />
           <p>{name}</p>
           {stock > 0 ? (
@@ -59,7 +129,7 @@ const Productmanagement = () => {
           <h3>₹{price}</h3>
         </section>
         <article>
-          <button className="product-delete-btn">
+          <button className="product-delete-btn" onClick={deleteHandler}>
             <FaTrash />
           </button>
           <form onSubmit={submitHandler}>

@@ -11,6 +11,24 @@ export interface IUser {
   updatedAt: string; // or Date
 }
 
+export interface Product {
+  _id: string;
+  title: string;
+  productPhoto: string; 
+  price: number;
+  stock: number;
+  category: "Shoes" | "Laptop" | "Mobile" | "Clothes" | "Accessories" | "Tablets";
+  createdBy: IUser; 
+}
+
+
+//----------------------------------- Response ans Request Types -----------------------------------//
+export interface CustomError {
+  success: boolean;
+  message: string;
+  statusCode?: number; // Optional, if you want to include a status code
+}
+
 export interface RegisterApiResponse {
   success: boolean;
   message?: string;
@@ -33,4 +51,62 @@ export interface LogoutResponse {
   message?: string;
   statusCode?: number; // Assuming you return a status code on successful logout
   user?: IUser
+}
+
+export interface LatestProductsResponse {
+  success: boolean;
+  message?: string;
+  data: Product[];
+  statusCode?: number; // Assuming you return a status code for the latest products
+}
+
+export interface CategoryResponse {
+  statusCode: number;
+  success: boolean;
+  message?: string;
+  data: string[]; // Assuming categories are strings
+}
+
+export interface SearchProductsResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    products: Product[];
+    totalPages: number;
+  };
+  statusCode?: number; // Assuming you return a status code for the search results
+}
+
+export interface SearchProductsRequest {
+  price?: number,
+  category?: string,
+  page?: number,
+  search?: string,
+  sort?: string
+}
+
+export interface CreateProductResponse {
+  success: boolean;
+  message?: string;
+  data?: Product;
+  statusCode?: number; 
+}
+
+export interface ProductDetailsResponse {
+  success: boolean;
+  message?: string;
+  data: Product;
+  statusCode?: number; // Assuming you return a status code for product details
+}
+
+export interface UpdateProductRequest {
+  id: string;
+  productData: FormData; // Assuming you send FormData for updating product
+}
+
+export interface CommonResponse {
+  success: boolean;
+  message?: string;
+  data?: Product; // Assuming you return the deleted product
+  statusCode?: number; // Assuming you return a status code for deletion
 }

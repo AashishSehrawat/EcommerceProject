@@ -1,9 +1,17 @@
 import { Link } from "react-router-dom";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import ProductCard from "../components/ProductCard";
-import macbook from '../assets/Products/macbook.jpg'
+import { useLatestProductsQuery } from "../redux/api/productApi";
+import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 const Home = () => {
+  const {data, error, isLoading} = useLatestProductsQuery();
+
+  if (error) {
+    toast.error("Something went wrong while fetching products");
+  }
+
   const addToCartHandler = () => {};
 
   return (
@@ -19,62 +27,18 @@ const Home = () => {
           </Link>
         </div>
         <main>
-          <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
+          { isLoading && (<Loader />) }
+          {data?.data.map((product) => (
+            <ProductCard
+            key={product._id}
+            productId={product._id}
+            name={product.title}
+            price={product.price}
+            stock={product.stock}
+            photo={product.productPhoto}
             handler={addToCartHandler}
           />
-          <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
-          <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
-          <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
-                   <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
-                   <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
-                   <ProductCard
-            productId="jfbvad"
-            name="Macbook"
-            price={80000}
-            stock={20}
-            photo={macbook}
-            handler={addToCartHandler}
-          />
+          ))}
         </main>
       </section>
     </div>

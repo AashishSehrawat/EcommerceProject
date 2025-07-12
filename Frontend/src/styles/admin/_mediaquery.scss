@@ -2,7 +2,7 @@
 
 @media screen and (width<= 1200px) {
   .admin-container {
-    overflow: auto;
+    overflow-y: hidden;
   }
 
   .dashboard {
@@ -22,7 +22,7 @@
   }
 
   .product-management {
-    padding: 2rem;
+    padding: 0 2rem;
   }
 }
 

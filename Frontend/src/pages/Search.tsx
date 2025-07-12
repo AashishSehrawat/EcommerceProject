@@ -1,17 +1,53 @@
 import ProductCard from "../components/ProductCard";
 import macbook from "../assets/Products/macbook.jpg";
 import { useState } from "react";
+import {
+  useCategoriesQuery,
+  useSearchProductsQuery,
+} from "../redux/api/productApi";
+import toast from "react-hot-toast";
+import { CustomError } from "../types/apiTypes";
 
 const Search = () => {
+  const {
+    data: categoriesResponse,
+    isError: isCategoriesError,
+    error: categoriesError,
+  } = useCategoriesQuery();
+
+  if (isCategoriesError) {
+    toast.error(
+      (categoriesError as CustomError).message || "Failed to fetch categories"
+    );
+  }
+
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [maxPrice, setMaxPrice] = useState(100000);
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
 
+  const {
+    data: searchData,
+    isError: isSearchError,
+    error: searchError,
+  } = useSearchProductsQuery({
+    price: maxPrice,
+    search,
+    sort,
+    category,
+    page,
+  });
+
+  if(isSearchError) {
+    toast.error(
+      (searchError as CustomError).message || "Failed to fetch products"
+    );
+  }
+
   const addToCartHandler = () => {};
 
-  const isNextPage = page < 4;
+  const isNextPage = page < (searchData?.data.totalPages || 1);
   const isPrevPage = page > 1;
 
   return (
@@ -51,9 +87,11 @@ const Search = () => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="">All</option>
-                <option value="">Laptop</option>
-                <option value="">Camera</option>
-                <option value="">Game</option>
+                {categoriesResponse?.data.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -72,72 +110,43 @@ const Search = () => {
             />
           </div>
           <div className="productSearch">
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
-            <ProductCard
-              productId="jfbvad"
-              name="Macbook"
-              price={80000}
-              stock={20}
-              photo={macbook}
-              handler={addToCartHandler}
-            />
+            {searchData?.success ? (
+              searchData?.data.products.map((product) => (
+                <ProductCard
+                  productId={product._id}
+                  key={product._id}
+                  name={product.title}
+                  price={product.price}
+                  stock={product.stock}
+                  photo={product.productPhoto}
+                  handler={addToCartHandler}
+                />
+              ))
+            ) : (
+              <>
+                <h2>No Product Found</h2>
+              </>
+            )}
           </div>
-          <article>
-            <button
-              disabled={!isPrevPage}
-              onClick={() => setPage((prev) => prev - 1)}
-            >
-              Prev
-            </button>
-            <span>
-              {page} of {4}
-            </span>
-            <button
-              disabled={!isNextPage}
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              Next
-            </button>
-          </article>
+          {searchData?.data.totalPages! > 1 && (
+            <article>
+              <button
+                disabled={!isPrevPage}
+                onClick={() => setPage((prev) => prev - 1)}
+              >
+                Prev
+              </button>
+              <span>
+                {page} of {searchData?.data.totalPages || 1}
+              </span>
+              <button
+                disabled={!isNextPage}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                Next
+              </button>
+            </article>
+          )}
         </div>
       </main>
     </div>
