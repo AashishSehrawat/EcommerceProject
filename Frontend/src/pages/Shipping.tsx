@@ -1,6 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
+import { CartReducerInitialState } from "../redux/reducer/cartReducer";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 interface CountryOption {
   value: string;
@@ -37,6 +40,9 @@ const CountrySelect = ({
 };
 
 const Shipping = () => {
+  const { cartItems } = useSelector((state: { cart: CartReducerInitialState }) => state.cart);
+  const navigate = useNavigate();
+  
   const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [state, setState] = useState<string>("");
@@ -44,6 +50,12 @@ const Shipping = () => {
   const [pinCode, setPinCode] = useState<string>("");
 
   const submitHandler = () => {};
+
+  useEffect(() => {
+    if(cartItems.length <=0) navigate("/cart");
+  }, [cartItems]) 
+
+  
 
   return (
     <div className="shipping container">

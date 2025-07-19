@@ -21,6 +21,24 @@ export interface Product {
   createdBy: IUser; 
 }
 
+export type CartItem = {
+  productId: string;
+  name: string;
+  price: number;  
+  quantity: number;
+  photo: string;
+  stock: number;
+}
+
+export type ShippingInfo = {
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  pinCode: string;
+}
+
+
 
 //----------------------------------- Response ans Request Types -----------------------------------//
 export interface CustomError {
@@ -109,4 +127,62 @@ export interface CommonResponse {
   message?: string;
   data?: Product; // Assuming you return the deleted product
   statusCode?: number; // Assuming you return a status code for deletion
+}
+
+export interface DiscountApplyResponse {
+  success: boolean;
+  message?: string;
+  data?: number;
+  statusCode?: number;
+}
+
+export interface CreateOrderRequest {
+  shippingOrderInfo: ShippingInfo,
+  subTotal: number,
+  tax: number,
+  shippingCharges: number,
+  discount: number,
+  total: number,
+  status: string,
+  user: string,
+  orderItems: [
+    {
+      productId: string,
+      title: string,
+      price: number,  
+      quantity: number,
+      photo: string,    
+    },
+  ],
+}
+
+interface OrderItem {
+  title: string;
+  photo: string;
+  price: number;
+  quantity: number;
+  productID: string;
+  _id: string;
+}
+
+interface OrderData {
+  shippingOrderInfo: ShippingInfo;
+  user: string;
+  subTotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  status: "Processing" | "Shipped" | "Delivered" | "Cancelled"; // Add other possible statuses
+  orderItems: OrderItem[];
+  _id: string;
+  createdAt: string; // or Date if you'll convert it
+  updatedAt: string; // or Date if you'll convert it
+}
+
+export interface CreateOrderApiResponse {
+  statusCode: number;
+  message: string;
+  data: OrderData;
+  success: boolean;
 }

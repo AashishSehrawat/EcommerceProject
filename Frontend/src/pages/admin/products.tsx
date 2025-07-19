@@ -53,7 +53,7 @@ const Products = () => {
     name: i.title,
     price: i.price,
     stock: i.stock,
-    action: <Link to={`/admin/product/${i._id}`}>Manage</Link>
+    action: <Link key={i._id} to={`/admin/product/${i._id}`}>Manage</Link>
   })))
   }, [data])
 

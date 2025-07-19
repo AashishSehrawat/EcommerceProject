@@ -1,81 +1,91 @@
 import { useEffect, useState } from "react";
 import { VscError } from "react-icons/vsc";
-import macbook from "../assets/Products/macbook.jpg";
-import CartItem from "../components/CartItem";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
-
-const subTotal = 4000;
-const tax = Math.round(subTotal * 0.18);
-const shippingCharge = 200;
-const discount = 40;
-const totalCharge = subTotal + tax + shippingCharge - discount;
+import CartItemCard from "../components/CartItem";
+import {
+  addToCart,
+  calulatePrice,
+  CartReducerInitialState,
+  discountApply,
+  removeCartItem,
+} from "../redux/reducer/cartReducer";
+import { CartItem, DiscountApplyResponse } from "../types/apiTypes";
+import axios from "axios";
 
 const Cart = () => {
-  const cartItems = [
-    {
-      productId: "aflasjkdnf",
-      photo: macbook,
-      name: "Macbook",
-      price: 80000,
-      quantity: 4,
-      stock: 10,
-    },
-    {
-      productId: "aflasjkdnf",
-      photo: macbook,
-      name: "Macbook M4",
-      price: 160000,
-      quantity: 4,
-      stock: 10,
-    },
-    {
-      productId: "aflasjkdnf",
-      photo: macbook,
-      name: "Macbook M4",
-      price: 160000,
-      quantity: 4,
-      stock: 10,
-    },
+  const { cartItems, subtotal, tax, total, shippingCharges, discount } =
+    useSelector((state: { cart: CartReducerInitialState }) => state.cart);
 
-    {
-      productId: "aflasjkdnf",
-      photo: macbook,
-      name: "Macbook M4",
-      price: 160000,
-      quantity: 4,
-      stock: 10,
-    },
-    {
-      productId: "aflasjkdnf",
-      photo: macbook,
-      name: "Macbook M4",
-      price: 160000,
-      quantity: 4,
-      stock: 10,
-    },
-  ];
+  const dispatch = useDispatch();
 
   const [couponCode, setCouponCode] = useState<string>("");
   const [isValidCouponCode, setIsValidCouponCode] = useState<boolean>(false);
 
+  const incrementHandler = (cartItem: CartItem) => {
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity + 1 }));
+  };
+
+  const decrementHandler = (cartItem: CartItem) => {
+    dispatch(addToCart({ ...cartItem, quantity: cartItem.quantity - 1 }));
+  };
+
+  const removeHandler = (productId: string) => {
+    dispatch(removeCartItem(productId));
+  };
+
   useEffect(() => {
+    const controller = new AbortController();
+
     const timeOutId = setTimeout(() => {
-      if (Math.random() > 0.5) setIsValidCouponCode(true);
-      else setIsValidCouponCode(false);
+      axios
+        .get<DiscountApplyResponse>(
+          `http://localhost:3000/api/v1/payment/discount?coupon=${couponCode}`,
+          {
+            // signal: controller.signal,
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`
+            },
+          },
+        )
+        .then((res) => {
+            dispatch(discountApply(res.data.data!));
+            setIsValidCouponCode(true);
+            dispatch(calulatePrice());
+        })
+        .catch((e) => {  
+          if(e.name !== "CanceledError"){
+            dispatch(discountApply(0));
+            setIsValidCouponCode(false);
+            dispatch(calulatePrice());
+          }
+        });
     }, 1000);
 
     return () => {
       clearTimeout(timeOutId);
+      controller.abort();
       setIsValidCouponCode(false);
     };
   }, [couponCode]);
+
+  useEffect(() => {
+    dispatch(calulatePrice());
+  }, [cartItems]);
 
   return (
     <div className="cart container">
       <main>
         {cartItems.length > 0 ? (
-          cartItems.map((item, ind) => <CartItem key={ind} cartItem={item} />)
+          cartItems.map((item, ind) => (
+            <CartItemCard
+              incrementHandler={incrementHandler}
+              decrementHandler={decrementHandler}
+              removeHandler={removeHandler}
+              key={ind}
+              cartItem={item}
+            />
+          ))
         ) : (
           <h1>No Items Added</h1>
         )}
@@ -83,13 +93,13 @@ const Cart = () => {
       <aside>
         <div className="asideContentCart">
           <div className="totalPriceCart">
-            <p>Subtotal: ₹{subTotal}</p>
-            <p>Shipping Charges: ₹{shippingCharge}</p>
+            <p>Subtotal: ₹{subtotal}</p>
+            <p>Shipping Charges: ₹{shippingCharges}</p>
             <p>Tax: ₹{tax}</p>
             <p>
               Discount: <span className="red"> - ₹{discount}</span>
             </p>
-            <p>Total: ₹{totalCharge}</p>
+            <p>Total: ₹{total}</p>
           </div>
           <div className="couponCart">
             <input

@@ -1,8 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { RegisterApiResponse } from "../types/apiTypes";
 import { useSignupMutation } from "../redux/api/authApi";
 
 

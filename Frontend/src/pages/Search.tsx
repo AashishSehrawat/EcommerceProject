@@ -1,12 +1,13 @@
 import ProductCard from "../components/ProductCard";
-import macbook from "../assets/Products/macbook.jpg";
 import { useState } from "react";
 import {
   useCategoriesQuery,
   useSearchProductsQuery,
 } from "../redux/api/productApi";
 import toast from "react-hot-toast";
-import { CustomError } from "../types/apiTypes";
+import { CartItem, CustomError } from "../types/apiTypes";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/reducer/cartReducer";
 
 const Search = () => {
   const {
@@ -45,7 +46,15 @@ const Search = () => {
     );
   }
 
-  const addToCartHandler = () => {};
+  const dispatch = useDispatch();
+  const addToCartHandler = (cartItem: CartItem) => {
+    if(cartItem.stock < 1) {
+      toast.error("Product is out of stock");
+    } 
+
+    dispatch(addToCart(cartItem));
+    toast.success("Item is added");
+  };
 
   const isNextPage = page < (searchData?.data.totalPages || 1);
   const isPrevPage = page > 1;

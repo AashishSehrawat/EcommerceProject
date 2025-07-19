@@ -1,18 +1,29 @@
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 import ProductCard from "../components/ProductCard";
 import { useLatestProductsQuery } from "../redux/api/productApi";
-import toast from "react-hot-toast";
-import Loader from "../components/Loader";
+import { addToCart } from "../redux/reducer/cartReducer";
+import { CartItem } from "../types/apiTypes";
 
 const Home = () => {
   const {data, error, isLoading} = useLatestProductsQuery();
+  const dispatch = useDispatch();
 
   if (error) {
     toast.error("Something went wrong while fetching products");
   }
 
-  const addToCartHandler = () => {};
+  const addToCartHandler = (cartItem: CartItem) => {
+    if(cartItem.stock < 1) {
+      toast.error("Product is out of stock");
+    } 
+
+    dispatch(addToCart(cartItem));
+    toast.success("Item is added");
+  };
 
   return (
     <div className="home container">
