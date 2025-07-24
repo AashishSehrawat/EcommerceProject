@@ -53,7 +53,7 @@ function App() {
             {/* Logged in user routes */}
             <Route element={<UserRoute />}>
               <Route path="/shipping" element={<Shipping />} />
-              <Route path="/orders" element={<Orders />} />
+              <Route path="/myOrders/:id" element={<Orders />} />
               <Route path="/orders/:id" element={<OrderDetails />} />
             </Route>
           </Route>

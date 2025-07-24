@@ -1,7 +1,10 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import TableHOC from "../components/admin/TableHOC";
 import { Column } from "react-table";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useMyOrdersQuery } from "../redux/api/orderApi";
+import toast from "react-hot-toast";
 
 interface DataType {
   _id: string;
@@ -40,16 +43,28 @@ const column: Column<DataType>[] = [
 ];
 
 const Orders = () => {
-  const [rows] = useState<DataType[]>([
-    {
-      _id: "nfdlgvnadsf",
-      amount: 4000,
-      quantity: 2,
-      discount: 100,
-      status: <span className="red">Processing</span>,
-      action: <Link to={`/orders/nfdlgvnadsf`}>View</Link>,
-    },
-  ]);
+  const { user } = useSelector((state: any) => state.auth)
+
+  const {data, isError} = useMyOrdersQuery(user._id);
+  if(isError) {
+    toast.error("Failed to fetch the orders");
+  }
+
+
+  const [rows, setRows] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    if(data) setRows(data.data.map(i => ({
+      _id: i._id,
+      amount: i.total,
+      quantity: i.orderItems.length,
+      discount: i.discount,
+      status: <span className={
+        i.status == "Processing" ? "red" : i.status == "Shipped" ? "green" : "purple"
+      }>{i.status}</span>,
+      action: <Link to={`/orders/${i._id}`}>View</Link>, 
+    })))
+  }, [data])
 
   const Table = TableHOC<DataType>(
     column,

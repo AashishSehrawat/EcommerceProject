@@ -156,7 +156,7 @@ export interface CreateOrderRequest {
   ],
 }
 
-interface OrderItem {
+export interface OrderItem {
   title: string;
   photo: string;
   price: number;
@@ -165,7 +165,7 @@ interface OrderItem {
   _id: string;
 }
 
-interface OrderData {
+export interface OrderData {
   shippingOrderInfo: ShippingInfo;
   user: string;
   subTotal: number;
@@ -176,11 +176,60 @@ interface OrderData {
   status: "Processing" | "Shipped" | "Delivered" | "Cancelled"; // Add other possible statuses
   orderItems: OrderItem[];
   _id: string;
-  createdAt: string; // or Date if you'll convert it
-  updatedAt: string; // or Date if you'll convert it
 }
 
 export interface CreateOrderApiResponse {
+  statusCode: number;
+  message: string;
+  data: OrderData;
+  success: boolean;
+}
+
+export interface MyOrdersResponse {
+  statusCode: number;
+  message: string;
+  data: OrderData[];
+  success: boolean;
+}
+
+interface AdminOrderData {
+  shippingOrderInfo: ShippingInfo;
+  user: {
+    _id: string,
+    name: string,
+  };
+  subTotal: number;
+  tax: number;
+  shippingCharges: number;
+  discount: number;
+  total: number;
+  status: "Processing" | "Shipped" | "Delivered" | "Cancelled"; // Add other possible statuses
+  orderItems: OrderItem[];
+  _id: string;
+}
+
+export interface AllOrdersResponse {
+  statusCode: number;
+  message: string;
+  data: AdminOrderData[];
+  success: boolean;
+}
+
+export interface SingleOrderDetailsResponse {
+  statusCode: number;
+  message: string;
+  data: OrderData;
+  success: boolean;
+}
+
+export interface UpdateOrderResponse {
+  statusCode: number;
+  message: string;
+  data: OrderData;
+  success: boolean;
+}
+
+export interface DeleteOrderResponse {
   statusCode: number;
   message: string;
   data: OrderData;

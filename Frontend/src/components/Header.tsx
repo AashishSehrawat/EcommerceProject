@@ -77,7 +77,7 @@ const Header = () => {
                   </Link>
                 )}
 
-                <Link to={"/orders"} onClick={() => setIsOpen(false)}>
+                <Link to={`/myorders/_id=${user._id}`} onClick={() => setIsOpen(false)}>
                   Orders
                 </Link>
                 <button onClick={logoutHandler}>
