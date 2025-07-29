@@ -35,7 +35,7 @@ export type ShippingInfo = {
   city: string;
   state: string;
   country: string;
-  pinCode: string;
+  pincode: number;
 }
 
 
@@ -145,15 +145,7 @@ export interface CreateOrderRequest {
   total: number,
   status: string,
   user: string,
-  orderItems: [
-    {
-      productId: string,
-      title: string,
-      price: number,  
-      quantity: number,
-      photo: string,    
-    },
-  ],
+  orderItems: OrderItem[],
 }
 
 export interface OrderItem {
@@ -162,7 +154,7 @@ export interface OrderItem {
   price: number;
   quantity: number;
   productID: string;
-  _id: string;
+  _id?: string;
 }
 
 export interface OrderData {
@@ -233,5 +225,75 @@ export interface DeleteOrderResponse {
   statusCode: number;
   message: string;
   data: OrderData;
+  success: boolean;
+}
+
+export interface PaymentApiResponse {
+  statusCode: number;
+  message: string;
+  data: string; // clientSecret
+  success: boolean;
+}
+
+export interface AllUsersResponse {
+  statusCode: number;
+  message: string;
+  data: IUser[];
+  success: boolean;
+}
+
+export interface DeleteUserResponse {
+  statusCode: number;
+  message: string;
+  data: IUser;
+  success: boolean;
+}
+
+// Dashboard API Types
+interface Transaction {
+  _id: string;
+  discount: number;
+  status: string;
+  amount: number;
+  quantity: number;
+}
+
+interface GenderRatio {
+  maleCount: number;
+  femaleCount: number;
+}
+
+interface CategoryCount {
+  [key: string]: number;
+}
+
+interface CountStats {
+  revenue: number;
+  user: number;
+  order: number;
+  product: number;
+}
+
+interface ChartData {
+  count: number[];
+  revenue: number[];
+}
+
+interface DashboardStats {
+  latestTransaction: Transaction[];
+  genderRatio: GenderRatio;
+  categoryNameAndCount: CategoryCount[];
+  userChangePercent: number;
+  productChangePercent: number;
+  orderChangePercent: number;
+  revenueChangePercent: number;
+  count: CountStats;
+  chart: ChartData;
+}
+
+export interface DashboardStatsResponse {
+  statusCode: number;
+  message: string;
+  data: DashboardStats
   success: boolean;
 }

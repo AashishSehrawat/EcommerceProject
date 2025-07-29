@@ -21,7 +21,7 @@
   font-weight: 400;
 }
 
-$colorBlue: #0085FB;
+$colorBlue: #0085fb;
 
 * {
   margin: 0;
@@ -29,7 +29,7 @@ $colorBlue: #0085FB;
   box-sizing: border-box;
 }
 
-body{
+body {
   user-select: none;
 }
 
@@ -57,7 +57,7 @@ a {
   width: 100%;
   background-color: #f3f3f356;
   box-shadow: 0px 2px 5px rgba(139, 139, 139, 0.137);
-  padding: .5rem 2rem;
+  padding: 0.5rem 2rem;
   @include flex(row, space-between, center, 1rem);
 
   .itemsHeader {
@@ -66,7 +66,7 @@ a {
 
     > a {
       @include flex();
-      transition: all .3s;
+      transition: all 0.3s;
       font-weight: 500;
       &:hover {
         color: $colorBlue;
@@ -78,25 +78,26 @@ a {
       outline: none;
       font-size: 1.2rem;
       padding-top: 5px;
-      transition: all .3s;
+      transition: all 0.3s;
       cursor: pointer;
-      &:hover{
+      &:hover {
         color: $colorBlue;
       }
     }
 
-    .authButtons{
-      @include flex(row, unset, center, .5rem);
+    .authButtons {
+      @include flex(row, unset, center, 0.5rem);
     }
 
-    .logInButton, .signInButton {
+    .logInButton,
+    .signInButton {
       background-color: $colorBlue;
       color: white;
       border: none;
       outline: none;
       font-size: 1.05rem;
       padding: 5px 10px;
-      transition: all .3s;
+      transition: all 0.3s;
       border-radius: 20px;
       cursor: pointer;
       &:hover {
@@ -116,9 +117,9 @@ a {
       left: calc(100% - 130px);
       top: 10%;
       div {
-        @include flex(column, center, unset, .2rem);
+        @include flex(column, center, unset, 0.2rem);
         > a {
-          transition: all .3s;
+          transition: all 0.3s;
           &:hover {
             color: $colorBlue;
           }
@@ -128,66 +129,43 @@ a {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.checkout-container {
+  max-width: 500px;
+  width: 100%;
+  margin: auto;
+  > form {
+    @include flex(column, unset, unset, 1rem);
+    button {
+      border: none;
+      outline: none;
+      font-size: 1.2rem;
+      padding: 5px;
+      border-radius: 4px;
+      color: white;
+      background-color: #0085fb;
+      transition: all 0.3s;
+      cursor: pointer;
+      &:hover {
+        background-color: black;
+      }
+    }
+  }
+}
 
 // Admin dashboard SCSS
 
 .logoDesign {
-    width: 100%;    
-    color: $colorBlue;
-    @include flex(row, none, center, 0rem);
-    font-size: 1.7rem;
-    font-weight: 700;
-    vertical-align: middle;
-    cursor: pointer;
-    padding-left: 10px;
-    > span {
-        padding-left: .5rem;
-    }
+  width: 100%;
+  color: $colorBlue;
+  @include flex(row, none, center, 0rem);
+  font-size: 1.7rem;
+  font-weight: 700;
+  vertical-align: middle;
+  cursor: pointer;
+  padding-left: 10px;
+  > span {
+    padding-left: 0.5rem;
+  }
 }
 
 .admin-container {

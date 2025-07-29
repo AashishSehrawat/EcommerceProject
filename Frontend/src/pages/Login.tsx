@@ -1,10 +1,8 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import axios from "axios";
-import { LoginApiResponse } from "../types/apiTypes";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../redux/api/authApi";
-import { useDispatch } from "react-redux";
 import { setCredentials } from "../redux/reducer/authReducer";
 
 const Login = () => {

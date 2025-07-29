@@ -1,9 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, FormEvent } from "react";
 import Select from "react-select";
 import countryList from "react-select-country-list";
-import { CartReducerInitialState } from "../redux/reducer/cartReducer";
-import { useSelector } from "react-redux";
+import { CartReducerInitialState, saveShippingInfo } from "../redux/reducer/cartReducer";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { PaymentApiResponse } from "../types/apiTypes";
 
 interface CountryOption {
   value: string;
@@ -40,22 +43,63 @@ const CountrySelect = ({
 };
 
 const Shipping = () => {
-  const { cartItems } = useSelector((state: { cart: CartReducerInitialState }) => state.cart);
+  const { cartItems, total } = useSelector(
+    (state: { cart: CartReducerInitialState }) => state.cart
+  );
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+
   const [address, setAddress] = useState<string>("");
   const [city, setCity] = useState<string>("");
   const [state, setState] = useState<string>("");
   const [country, setCountry] = useState<string>("");
-  const [pinCode, setPinCode] = useState<string>("");
+  const [pincode, setPincode] = useState<number>();
 
-  const submitHandler = () => {};
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!address || !city || !state || !country || !pincode) {
+      return toast.error("All shipping fields are required");
+    }
+
+    dispatch(saveShippingInfo({
+      address,
+      city,
+      state,
+      country,
+      pincode: Number(pincode),
+    }));
+
+    try {
+      console.log("hii")
+      const res = await axios.post<PaymentApiResponse>(
+        `http://localhost:3000/api/v1/payment/create`,
+        {
+          amount: total,  
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("res", res);
+
+      if(res) {
+        navigate("/pay", {
+          state: res.data?.data
+        })
+      }
+    } catch (error) {
+      console.log("Error in Shipping submit controller", error);
+      return toast.error("Something went wrong")
+    }
+  };
 
   useEffect(() => {
-    if(cartItems.length <=0) navigate("/cart");
-  }, [cartItems]) 
-
-  
+    if (cartItems.length <= 0) navigate("/cart");
+  }, [cartItems]);
 
   return (
     <div className="shipping container">
@@ -87,11 +131,11 @@ const Shipping = () => {
           setSelectedCountry={setCountry}
         />
         <input
-          type="text"
+          type="number"
           placeholder="Pin Code"
           required
-          value={pinCode}
-          onChange={(e) => setPinCode(e.target.value)}
+          value={pincode}
+          onChange={(e) => setPincode(Number(e.target.value))}
         />
         <button type="submit">Pay Now</button>
       </form>

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { LoginApiResponse, LogoutResponse, RegisterApiResponse } from '../../types/apiTypes';
+import { AllUsersResponse, DeleteUserResponse, LoginApiResponse, LogoutResponse, RegisterApiResponse } from '../../types/apiTypes';
 
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -35,8 +35,20 @@ export const authApi = createApi({
                 url: '/logout',
                 method: 'POST',
             }),
-        })
+        }),
+        deleteUser: builder.mutation<DeleteUserResponse, any>({
+            query: (userId) => ({
+                url: `/${userId}`,
+                method: 'DELETE',
+            }),
+        }),
+        allUsers: builder.query<AllUsersResponse, void>({
+            query: () => ({
+                url: '/all',
+                method: 'GET',
+            }),
+        }),
     }),
 })
 
-export const { useLoginMutation, useSignupMutation, useLogoutMutation } = authApi;
+export const { useLoginMutation, useSignupMutation, useLogoutMutation, useAllUsersQuery, useDeleteUserMutation } = authApi;

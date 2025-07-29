@@ -25,7 +25,7 @@ const initialState: CartReducerInitialState = {
         city: "",
         state: "",
         country: "",
-        pinCode: ""
+        pincode: 0,
     }
 }
 
@@ -60,9 +60,13 @@ export const cartReducer = createSlice({
         },
         discountApply: (state, action: PayloadAction<number>) => {
             state.discount = action.payload;
-        }
+        },
+        saveShippingInfo: (state, action: PayloadAction<ShippingInfo>) => {
+            state.shippingInfo = action.payload;
+        },
+        resetCart: () => initialState,
     }
 });
 
-export const { addToCart, removeCartItem, calulatePrice, discountApply } = cartReducer.actions;
+export const { addToCart, removeCartItem, calulatePrice, discountApply, saveShippingInfo, resetCart } = cartReducer.actions;
 export default cartReducer.reducer;
