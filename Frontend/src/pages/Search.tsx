@@ -6,8 +6,10 @@ import {
 } from "../redux/api/productApi";
 import toast from "react-hot-toast";
 import { CartItem, CustomError } from "../types/apiTypes";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/reducer/cartReducer";
+import { RootState } from "../redux/store";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const {
@@ -46,8 +48,18 @@ const Search = () => {
     );
   }
 
+  const { user } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+  console.log("user", user);
+
   const dispatch = useDispatch();
   const addToCartHandler = (cartItem: CartItem) => {
+    if(!user) {
+      toast.error("Please login to add items to cart");
+      navigate("/login");
+      return;
+    }
+
     if(cartItem.stock < 1) {
       toast.error("Product is out of stock");
     } 

@@ -279,7 +279,7 @@ interface ChartData {
   revenue: number[];
 }
 
-interface DashboardStats {
+export interface DashboardStats {
   latestTransaction: Transaction[];
   genderRatio: GenderRatio;
   categoryNameAndCount: CategoryCount[];
@@ -297,3 +297,78 @@ export interface DashboardStatsResponse {
   data: DashboardStats
   success: boolean;
 }
+
+interface OrderFullfillment {
+  processing: number;
+  delivered: number;
+  shipped: number;
+}
+
+
+interface StockAvailability {
+  inStock: number;
+  outOfStock: number;
+}
+
+interface RevenueDistribution {
+  netMargin: number;
+  discount: number;
+  productCost: number;
+  burnt: number;
+  marketingCost: number;
+}
+
+interface UserAgeGroup {
+  teen: number;
+  adult: number;
+  old: number;
+}
+
+interface AdminUserCount {
+  admin: number;
+  user: number;
+}
+
+interface PieChartData {
+  orderFullfillment: OrderFullfillment;
+  categoryNameAndCount: CategoryCount[];
+  stockAvaliability: StockAvailability;
+  revenueDistribution: RevenueDistribution;
+  userAgeGroup: UserAgeGroup;
+  adminUserCount: AdminUserCount;
+}
+
+export interface PieChartResponse {
+  statusCode: number;
+  message: string;
+  data: PieChartData;
+  success: boolean;
+}
+
+interface BarChartData {
+  product: number[];
+  user: number[];
+  order: number[];
+}
+
+export interface BarChartApiResponse {
+  statusCode: number;
+  message: string;
+  data: BarChartData;
+  success: boolean;
+}
+
+interface LineChartData {
+  users: number[];
+  orders: number[];
+  discount: number[];
+  revenue: number[];
+}
+
+export interface LineChartResponse {
+  statusCode: number;
+  message: string;
+  data: LineChartData;
+  success: boolean;
+}
+

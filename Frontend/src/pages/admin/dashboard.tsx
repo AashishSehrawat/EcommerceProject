@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { BiMaleFemale } from "react-icons/bi";
 import { BsSearch } from "react-icons/bs";
 import { FaRegBell } from "react-icons/fa";
@@ -5,13 +6,34 @@ import { HiTrendingDown, HiTrendingUp } from "react-icons/hi";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import { BarChart, DoughnutChart } from "../../components/admin/Charts";
 import Table from "../../components/admin/DashboardTable";
-import data from '../../assets/data.json';
+import Loader from "../../components/admin/Loader";
+import { useStatsQuery } from "../../redux/api/dashboardApi";
+import { getLastMonths } from "../../utils/features";
 
 
 const userImg =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJxA5cTf-5dh5Eusm0puHbvAhOrCRPtckzjA&usqp";
 
 const Dashboard = () => {
+  const {isLoading, data, isError, error} = useStatsQuery();
+  if(isLoading) {
+    return (
+      <div className="loading">
+        <Loader/>
+      </div>
+    );
+  }
+
+  if (isError) {
+    console.error("Error fetching dashboard stats:", error);
+    toast.error("Failed to load dashboard data. Please try again later.");
+  }
+
+  const stats = data?.data!;
+  console.log("Dashboard stats:", stats);
+
+  const {last6Months} = getLastMonths();
+
   return (
     <div className="admin-container">
       <AdminSidebar />
@@ -25,28 +47,28 @@ const Dashboard = () => {
 
         <section className="widget-container">
           <WidgetItem
-            percent={40}
+            percent={stats.revenueChangePercent}
             amount={true}
-            value={340000}
+            value={stats?.count?.revenue}
             heading="Revenue"
             color="rgb(0, 115, 255)"
           />
           <WidgetItem
-            percent={-14}
-            value={400}
+            percent={stats.userChangePercent}
+            value={stats.count.user}
             color="rgb(0 198 202)"
             heading="Users"
           />
           <WidgetItem
-            percent={80}
-            value={23000}
+            percent={stats.orderChangePercent}
+            value={stats.count.order}
             color="rgb(255 196 0)"
             heading="Transactions"
           />
 
           <WidgetItem
-            percent={30}
-            value={1000}
+            percent={stats.productChangePercent}
+            value={stats.count.product}
             color="rgb(76 0 255)"
             heading="Products"
           />
@@ -56,10 +78,11 @@ const Dashboard = () => {
           <div className="revenue-chart">
             <h2>Revenue & Transaction</h2>
             <BarChart
-              data_2={[300, 144, 433, 655, 237, 755, 190]}
-              data_1={[200, 444, 343, 556, 778, 455, 990]}
+              data_2={stats.chart.count}
+              data_1={stats.chart.revenue}
               title_1="Revenue"
               title_2="Transaction"
+              labels={last6Months}
               bgColor_1="rgb(0, 115, 255)"
               bgColor_2="rgba(53, 162, 235, 0.8)"
             />
@@ -67,14 +90,13 @@ const Dashboard = () => {
 
           <div className="dashboard-categories">
             <h2>Inventory</h2>
-
             <div>
-              {data.categories.map((i) => (
+              {stats.categoryNameAndCount.map((i) => (
                 <CategoryItem
-                  key={i.heading}
-                  value={i.value}
-                  heading={i.heading}
-                  color={`hsl(${i.value * 4}, ${i.value}%, 50%)`}
+                  key={Object.keys(i)[0]}
+                  value={Object.values(i)[0]}
+                  heading={Object.keys(i)[0]}
+                  color={`hsl(${Object.values(i)[0] * 4}, ${Object.values(i)[0]}%, 50%)`}
                 />
               ))}
             </div>
@@ -86,7 +108,7 @@ const Dashboard = () => {
             <h2>Gender Ratio</h2>
             <DoughnutChart
               labels={["Female", "Male"]}
-              data={[12, 19]}
+              data={[stats.genderRatio.femaleCount,stats.genderRatio.maleCount]}
               backgroundColor={[
                 "hsl(340, 82%, 56%)",
                 "rgba(53, 162, 235, 0.8)",
@@ -97,7 +119,7 @@ const Dashboard = () => {
               <BiMaleFemale />
             </p>
           </div>
-          <Table data={data.transaction} />
+          <Table data={stats.latestTransaction} />
         </section>
       </main>
     </div>
@@ -148,7 +170,8 @@ const WidgetItem = ({
           color,
         }}
       >
-        {percent}%
+        {percent >= 0 && `${percent > 10000 ? 9999 : percent}`}
+        {percent < 0 && `${percent < -10000 ? -9999 : percent}`}% 
       </span>
     </div>
   </article>

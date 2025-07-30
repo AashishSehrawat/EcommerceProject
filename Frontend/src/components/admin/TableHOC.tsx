@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   AiOutlineSortAscending,
   AiOutlineSortDescending,
@@ -18,13 +19,24 @@ function TableHOC<T extends Object>(
   showPagination: boolean = false
 ) {
   return function HOC() {
-    const options: TableOptions<T> = {
-      columns,
-      data,
+        const memoizedColumns = useMemo(() => columns, [columns]);
+    const memoizedData = useMemo(() => data, [data]);
+
+    const options: TableOptions<T> = useMemo(() => ({
+      columns: memoizedColumns,
+      data: memoizedData,
       initialState: {
         pageSize: 6,
       },
-    };
+    }), [memoizedColumns, memoizedData]);
+
+    // const options: TableOptions<T> = {
+    //   columns,
+    //   data,
+    //   initialState: {
+    //     pageSize: 6,
+    //   },
+    // };
 
     const {
       getTableProps,

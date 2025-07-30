@@ -1,10 +1,11 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { Column } from "react-table";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
+import Loader from "../../components/Loader";
 import { useAllOrdersQuery } from "../../redux/api/orderApi";
-import toast from "react-hot-toast";
 
 interface DataType {
   user: string;
@@ -43,15 +44,13 @@ const columns: Column<DataType>[] = [
 ];
 
 const Transaction = () => {
-  const {data, isError, error} = useAllOrdersQuery();
+  const {isLoading, data, isError, error} = useAllOrdersQuery();
 
   const [rows, setRows] = useState<DataType[]>([]);
 
-  if(isError) toast.error("Failed to fetch orders");
-
   useEffect(() => {
     if(data) setRows(data?.data.map(i => ({
-      user: i.user.name,
+      user: i.user?.name || "Unknown User",
       amount: i.total,
       discount: i.discount,
       quantity: i.orderItems.length,
@@ -59,21 +58,36 @@ const Transaction = () => {
         i.status == "Processing" ? "red" : i.status == "Shipped" ? "green" : "purple"
       }>{i.status}</span>,
       action: <Link to={`/admin/transaction/${i._id}`}>Manage</Link>,
-
     })))
   }, [data])
 
-  const Table = TableHOC<DataType>(
-    columns,
-    rows,
-    "dashboard-product-box",
-    "Transactions",
-    rows.length > 6
-  )();
+  const TableComponent = useMemo(() => {
+    return TableHOC<DataType>(
+      columns,
+      rows,
+      "dashboard-product-box",
+      "Transactions",
+      rows.length > 6
+    );
+  }, [rows]);
+
+  if(isLoading) {
+    return (
+      <div className="loading">
+        <Loader/>
+      </div>
+    );
+  }
+
+  if(isError){
+    console.log("Error fetching orders:", error);
+    toast.error("Failed to fetch orders");
+  } 
+
   return (
     <div className="admin-container">
       <AdminSidebar />
-      <main>{Table}</main>
+      <main>{<TableComponent/>}</main>
     </div>
   );
 };

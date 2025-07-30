@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { DashboardStatsResponse } from "../../types/apiTypes";
+import { BarChartApiResponse, DashboardStatsResponse, LineChartResponse, PieChartResponse } from "../../types/apiTypes";
 
 
 export const dashboardApi = createApi({
@@ -22,19 +22,19 @@ export const dashboardApi = createApi({
                 method: "GET",
             }),
         }),
-        pie: builder.query<any, void>({
+        pie: builder.query<PieChartResponse, void>({
             query: () => ({
                 url: "/pie",
                 method: "GET",
             })
         }),
-        bar: builder.query<any, void>({
+        bar: builder.query<BarChartApiResponse, void>({
             query: () => ({
                 url: "/bar",
                 method: "GET",
             })
         }),
-        line: builder.query<any, void>({
+        line: builder.query<LineChartResponse, void>({
             query: () => ({
                 url: "/line",
                 method: "GET",

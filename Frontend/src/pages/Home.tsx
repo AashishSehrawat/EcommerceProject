@@ -1,22 +1,32 @@
 import toast from "react-hot-toast";
 import { FaLongArrowAltRight } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import ProductCard from "../components/ProductCard";
 import { useLatestProductsQuery } from "../redux/api/productApi";
 import { addToCart } from "../redux/reducer/cartReducer";
 import { CartItem } from "../types/apiTypes";
+import { RootState } from "../redux/store";
 
 const Home = () => {
   const {data, error, isLoading} = useLatestProductsQuery();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user } = useSelector((state: RootState) => state.auth);
 
   if (error) {
     toast.error("Something went wrong while fetching products");
   }
 
   const addToCartHandler = (cartItem: CartItem) => {
+    if (!user) {
+      toast.error("Please login to add items to cart");
+      navigate("/login");
+      return;
+    }
+
     if(cartItem.stock < 1) {
       toast.error("Product is out of stock");
     } 
