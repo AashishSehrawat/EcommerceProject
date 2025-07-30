@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { PaymentApiResponse } from "../types/apiTypes";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 interface CountryOption {
   value: string;
   label: string;
@@ -73,7 +75,7 @@ const Shipping = () => {
     try {
       console.log("hii")
       const res = await axios.post<PaymentApiResponse>(
-        `http://localhost:3000/api/v1/payment/create`,
+        `${API_URL}/api/v1/payment/create`,
         {
           amount: total,  
         },

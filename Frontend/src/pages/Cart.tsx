@@ -13,6 +13,8 @@ import {
 import { CartItem, DiscountApplyResponse } from "../types/apiTypes";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Cart = () => {
   const { cartItems, subtotal, tax, total, shippingCharges, discount } =
     useSelector((state: { cart: CartReducerInitialState }) => state.cart);
@@ -40,7 +42,7 @@ const Cart = () => {
     const timeOutId = setTimeout(() => {
       axios
         .get<DiscountApplyResponse>(
-          `http://localhost:3000/api/v1/payment/discount?coupon=${couponCode}`,
+          `${API_URL}/api/v1/payment/discount?coupon=${couponCode}`,
           {
             // signal: controller.signal,
             headers: {

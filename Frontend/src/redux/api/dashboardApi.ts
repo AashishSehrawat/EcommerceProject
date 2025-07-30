@@ -1,11 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { BarChartApiResponse, DashboardStatsResponse, LineChartResponse, PieChartResponse } from "../../types/apiTypes";
 
-
+const API_URL = import.meta.env.VITE_API_URL;
 export const dashboardApi = createApi({
     reducerPath: "dashboardApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3000/api/v1/dashboard",
+        baseUrl: `${API_URL}/api/v1/dashboard`,
         credentials: "include", // Include credentials for CORS
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token");

@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { AllOrdersResponse, CreateOrderApiResponse, CreateOrderRequest, DeleteOrderResponse, MyOrdersResponse, SingleOrderDetailsResponse, UpdateOrderResponse } from "../../types/apiTypes";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const orderApi = createApi({
     reducerPath: "orderApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:3000/api/v1/order",
+        baseUrl: `${API_URL}/api/v1/order`,
         credentials: "include", // Include credentials for CORS
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token");

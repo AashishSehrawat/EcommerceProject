@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { AllUsersResponse, DeleteUserResponse, LoginApiResponse, LogoutResponse, RegisterApiResponse } from '../../types/apiTypes';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({ 
-        baseUrl: 'http://localhost:3000/api/v1/user',
+        baseUrl: `${API_URL}/api/v1/user`,
         credentials: 'include', // Include credentials for CORS 
         prepareHeaders: (headers) => {
             const token = localStorage.getItem("token")
